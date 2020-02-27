@@ -4,6 +4,9 @@ from acct.models import AcctType, Acct, Txn
 
 
 def index(request):
+    startdate = request.GET.get('startdate', '2000-01-01')
+    enddate = request.GET.get('enddate', '2100-01-01')
+        
     atypes = OrderedDict()
     accts = OrderedDict()
 
@@ -18,7 +21,9 @@ def index(request):
         accts[acct.id].bal = 0
         
     # alter balances
-    for t in Txn.objects.filter(user=request.user):
+    for t in Txn.objects.filter(user=request.user,
+                                date__gte=startdate,
+                                date__lte=enddate):
         dracct = accts[t.debit.id]
         cracct = accts[t.credit.id]
         
@@ -31,4 +36,6 @@ def index(request):
         
     
     return render(request, 'alexieui/index.html',
-                  {'atypes': atypes})
+                  {'startdate': startdate,
+                   'enddate': enddate,
+                   'atypes': atypes})

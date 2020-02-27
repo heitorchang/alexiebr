@@ -49,5 +49,5 @@ class Txn(models.Model):
         ordering = ['-date', '-id']
 
     def __str__(self):
-        return "{} {} ({})".format(self.date, self.desc, self.user)
+        return "{} {} {} ({})".format(self.date, self.desc, self.amt, self.user)
 
