@@ -2,13 +2,13 @@
 
 {% block content %}
 
-{% for at in atypes %}
+{% for atid, at in atypes.items %}
 <div class="accttype">
 {{ at }}
 <hr>
 
 {% for a in at.accts %}
-{{ a.name }}<br>
+{{ a.name }} {{ a.bal }}<br>
 {% endfor %}
 
 </div>
