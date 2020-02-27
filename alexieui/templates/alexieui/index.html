@@ -1,0 +1,17 @@
+{% extends "alexieui/base.html" %}
+
+{% block content %}
+
+{% for at in atypes %}
+<div class="accttype">
+{{ at }}
+<hr>
+
+{% for a in at.accts %}
+{{ a.name }}<br>
+{% endfor %}
+
+</div>
+{% endfor %}
+
+{% endblock %}
