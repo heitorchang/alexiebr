@@ -2,43 +2,113 @@
 
 {% block content %}
 
+{% if presetid != 0 %}
+Preset: {{ preset.name }}
+<br><br>
+{% endif %}
+
 <form action="{% url 'alexieui:add' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" name="addform" value="{{ presetid }}">
+
+    <table>
+        <tr>
+            <td>Desc:</td>
+            <td><input type="text" name="desc" autofocus></td>
+        </tr>
+
+        <tr>
+            <td>Amt:</td>
+            <td><input type="text" name="amt"></td>
+        </tr>
+
+        {% if presetid == 0 %}
+        <tr>
+            <td>Debit:</td>
+
+            <td>
+                <select name="debit">
+                    {% for acct in allAccts %}
+                    <option value="{{ acct.id }}">{{ acct.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Credit:</td>
+            <td>
+                <select name="credit">
+                    {% for acct in allAccts %}
+                    <option value="{{ acct.id }}">{{ acct.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+        
+        {% else %}
+
+        {% if preset.isDebit %}
+
+        <tr>
+            <td>Debit:</td>
+            <td>{{ preset.fixedAcct.name }}
+                <input type="hidden" name="debit" value="{{ preset.fixedAcct.id }}">
+            </td>
+        </tr>
+
+        <tr>
+            <td>Credit:</td>
+            <td>
+                <select name="credit">
+                    {% for acct in selectAccts %}
+                    <option value="{{ acct.id }}">{{ acct.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        {% else %}
+
+        <tr>
+            <td>Debit:</td>
+            <td>
+                <select name="debit">
+                    {% for acct in selectAccts %}
+                    <option value="{{ acct.id }}">{{ acct.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+
+        <tr>
+            <td>Credit:</td>
+            <td>{{ preset.fixedAcct.name }}
+                <input type="hidden" name="credit" value="{{ preset.fixedAcct.id }}">
+            </td>
+        </tr>
+        {% endif %}
+
+        {% endif %}
+
+        <tr>
+            <td>Date:</td>
+            <td><input type="text" name="date" value="{% now "Y-m-d" %}"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2">
+                <input type="submit">
+            </td>
+        </tr>
+    </table>
     
-    Desc: <input type="text" name="desc">
-    Amt: 
-    
+    <hr>
+    Latest transactions:
+    <br>
 
-    {% if presetid == 0 %}
-
-    Generic txn
-
-    {% else %}
-
-    {{ preset.name }}
-
-    <br><br>
-
-    {% if preset.isDebit %}
-
-    {{ preset.fixedAcct.name }} isDebit
-
-    {% else %}
-
-    <select name="debit">
-        {% for acct in selectAccts %}
-        <option value="{{ acct.id }}">{{ acct.name }}</option>
-        {% endfor %}
-    </select>
-
-    {{ preset.fixedAcct.name }} isCredit
-
-    {% endif %}
-
-
-    {% endif %}
-
-    <input type="submit">
+    {% for txn in latestTxns %}
+    {{ txn }}<br>
+    {% endfor %}
 </form>
 {% endblock %}

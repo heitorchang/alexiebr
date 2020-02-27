@@ -48,13 +48,22 @@ def index(request):
 
 
 def addform(request, presetid):
-    preset = Preset.objects.get(user=request.user, id=presetid)
-    selectAccts = Acct.objects.filter(user=request.user, acctType=preset.acctTypeSelect)
+    if presetid != 0:
+        preset = Preset.objects.get(user=request.user, id=presetid)
+        selectAccts = Acct.objects.filter(user=request.user, acctType=preset.acctTypeSelect)
+    else:
+        preset = None
+        selectAccts = None
+        
+    allAccts = Acct.objects.filter(user=request.user)
+    latestTxns = Txn.objects.filter(user=request.user)[:15]
     
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
                    'preset': preset,
-                   'selectAccts': selectAccts})
+                   'allAccts': allAccts,
+                   'selectAccts': selectAccts,
+                   'latestTxns': latestTxns})
 
 
 def add(request):
@@ -65,8 +74,15 @@ def add(request):
         date = request.POST['date']
         desc = request.POST['desc']
         amt = request.POST['amt']
-        debit = request.POST['debit']
-        credit = request.POST['credit']
+        debit = Acct.objects.get(user=user, id=int(request.POST['debit']))
+        credit = Acct.objects.get(user=user, id=int(request.POST['credit']))
+
+        Txn.objects.create(user=user,
+                           date=date,
+                           desc=desc,
+                           amt=amt,
+                           debit=debit,
+                           credit=credit)
         
         return redirect('alexieui:addform', addform)
     else:

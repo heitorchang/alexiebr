@@ -19,6 +19,12 @@
         </style>
     </head>
     <body>
+        <a href="{% url 'alexieui:index' %}">AlexieBr</a>
+        &bullet;
+        <a href="{% url 'admin:index' %}">Admin</a>
+        &bullet;
+        <a href="{% url 'alexieui:addform' 0 %}">Generic Txn</a>
+        <hr>
         {% block content %}{% endblock %}
     </body>
 </html>
