@@ -10,15 +10,19 @@ def index(request):
     atypes = OrderedDict()
     accts = OrderedDict()
 
+    
     # Initialize dict of account types
     for atype in AcctType.objects.all():
         atypes[atype.id] = atype
         atypes[atype.id].accts = []
+        atypes[atype.id].bal = 0
 
+        
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
         accts[acct.id].bal = 0
+
         
     # alter balances
     for t in Txn.objects.filter(user=request.user,
@@ -30,9 +34,11 @@ def index(request):
         dracct.bal += t.amt * dracct.acctType.sign
         cracct.bal -= t.amt * cracct.acctType.sign
 
+        
     # place account into its account type's list
     for acct in accts.values():
         atypes[acct.acctType.id].accts.append(acct)
+        atypes[acct.acctType.id].bal += acct.bal
         
     
     return render(request, 'alexieui/index.html',
