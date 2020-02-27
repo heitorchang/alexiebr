@@ -46,8 +46,25 @@ class Txn(models.Model):
     credit = models.ForeignKey(Acct, on_delete=models.CASCADE, related_name="credit_txns")
     
     class Meta:
-        ordering = ['-date', '-id']
+        ordering = ['-id']
 
     def __str__(self):
         return "{} {} {} ({})".format(self.date, self.desc, self.amt, self.user)
 
+
+class Preset(models.Model):
+    """Convenience view with fixed account and select values from an AcctType.
+    Defaults to fixed credit (source for expenses).
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    name = models.CharField(max_length=63)
+    isDebit = models.BooleanField(default=False)
+    fixedAcct = models.ForeignKey(Acct, on_delete=models.CASCADE)
+    acctTypeSelect = models.ForeignKey(AcctType, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['isDebit', 'fixedAcct', 'acctTypeSelect']
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.user)

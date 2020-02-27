@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from django.shortcuts import render
-from acct.models import AcctType, Acct, Txn
+from django.shortcuts import render, redirect
+from acct.models import AcctType, Acct, Txn, Preset
 
 
 def index(request):
@@ -45,3 +45,32 @@ def index(request):
                   {'startdate': startdate,
                    'enddate': enddate,
                    'atypes': atypes})
+
+
+def addform(request, presetid):
+    preset = Preset.objects.get(user=request.user, id=presetid)
+    selectAccts = Acct.objects.filter(user=request.user, acctType=preset.acctTypeSelect)
+    
+    return render(request, 'alexieui/addform.html',
+                  {'presetid': presetid,
+                   'preset': preset,
+                   'selectAccts': selectAccts})
+
+
+def add(request):
+    if request.method == "POST":
+        user = request.user
+
+        addform = request.POST['addform']
+        date = request.POST['date']
+        desc = request.POST['desc']
+        amt = request.POST['amt']
+        debit = request.POST['debit']
+        credit = request.POST['credit']
+        
+        return redirect('alexieui:addform', addform)
+    else:
+        return render(request, 'alexieui/redirect.html',
+                      {'msg': "Could not process request."})
+        
+                    

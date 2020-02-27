@@ -1,0 +1,44 @@
+{% extends "alexieui/base.html" %}
+
+{% block content %}
+
+<form action="{% url 'alexieui:add' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="addform" value="{{ presetid }}">
+    
+    Desc: <input type="text" name="desc">
+    Amt: 
+    
+
+    {% if presetid == 0 %}
+
+    Generic txn
+
+    {% else %}
+
+    {{ preset.name }}
+
+    <br><br>
+
+    {% if preset.isDebit %}
+
+    {{ preset.fixedAcct.name }} isDebit
+
+    {% else %}
+
+    <select name="debit">
+        {% for acct in selectAccts %}
+        <option value="{{ acct.id }}">{{ acct.name }}</option>
+        {% endfor %}
+    </select>
+
+    {{ preset.fixedAcct.name }} isCredit
+
+    {% endif %}
+
+
+    {% endif %}
+
+    <input type="submit">
+</form>
+{% endblock %}
