@@ -1,0 +1,28 @@
+# Emacs
+
+*~
+\#*
+.\#*
+
+
+# Testing
+
+geckodriver*
+
+
+# Python
+
+__pycache__/
+
+
+# Django
+
+db.sqlite3
+mysecrets.py
+
+
+# Tab completion Shortcuts
+
+runserver
+makemigrations
+migrate
