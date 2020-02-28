@@ -15,7 +15,7 @@
             <td>{{ t.date | date:"Y-m-d" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="{% url 'alexieui:acctdetail' t.credit.id %}">{{ t.credit.name }}</a></td>
-            <td>{{ t.desc }}</td>
+            <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>
         </tr>
         {% endfor %}
     </table>
@@ -29,7 +29,7 @@
             <td>{{ t.date | date:"Y-m-d" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="{% url 'alexieui:acctdetail' t.debit.id %}">{{ t.debit.name }}</a></td>
-            <td>{{ t.desc }}</td>
+            <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>
         </tr>
         {% endfor %}
     </table>

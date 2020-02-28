@@ -1,3 +1,4 @@
+import datetime 
 from decimal import Decimal
 from collections import OrderedDict
 from django.shortcuts import render, redirect
@@ -154,20 +155,46 @@ def acctdetail(request, acctid):
 
 
 def adj(request, acctid):
-    if request.method == "POST":
-        pass
-    else:
-        acct = Acct.objects.get(user=request.user, id=acctid)
-        acct.bal = Decimal('0.00')
+    acct = Acct.objects.get(user=request.user, id=acctid)
+    acct.bal = Decimal('0.00')
         
-        # get all-time balance
-        for t in Txn.objects.filter(user=request.user):
-            if t.debit.id == acctid:
-                acct.bal += t.amt * acct.acctType.sign
+    # get all-time balance
+    for t in Txn.objects.filter(user=request.user):
+        if t.debit.id == acctid:
+            acct.bal += t.amt * acct.acctType.sign
             
-            if t.credit.id == acctid:
-                acct.bal -= t.amt * acct.acctType.sign
+        if t.credit.id == acctid:
+            acct.bal -= t.amt * acct.acctType.sign
+            
+    if request.method == "POST":
+        diff = Decimal(request.POST.get('newbal', '0.00')) - acct.bal
+        sign = acct.acctType.sign
+        
+        if diff < 0:
+            diff_sign = -1
+        else:
+            diff_sign = 1
 
+        if diff_sign * sign == 1:
+            debit = acct.id
+            credit = int(request.POST.get('otheracct', '-1'))
+        else:
+            debit = int(request.POST.get('otheracct', '-1'))
+            credit = acct.id
+
+        date = datetime.date.today().strftime("%Y-%m-%d")
+        desc = request.POST.get('desc', '[auto] adj')
+
+        Txn.objects.create(user=request.user,
+                           date=date,
+                           desc=desc,
+                           amt=abs(diff),
+                           debit=Acct.objects.get(user=request.user, id=debit),
+                           credit=Acct.objects.get(user=request.user, id=credit))
+                           
+        return redirect("alexieui:acctdetail", acctid)
+    
+    else:
         allaccts = Acct.objects.filter(user=request.user)
         
         return render(request, 'alexieui/adjform.html',

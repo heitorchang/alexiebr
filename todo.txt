@@ -9,7 +9,7 @@
 [ok] header with selected all-time balances for assets (AB footer)
 [ok] account page separates this acct dr or this acct cr txns
 [ok] variable number of txns in acct page
+[ok] copy adj bal from AB
 
-[  ] copy adj bal from AB
 [  ] links to acct detail respect selected dates
 [  ] budget page
