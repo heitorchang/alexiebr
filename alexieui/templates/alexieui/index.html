@@ -3,14 +3,6 @@
 
 {% block content %}
 
-{% for preset in presets %}
-<a href="{% url 'alexieui:addform' preset.id %}">{{ preset.name }}</a>
-{% if not forloop.last %}
-&bullet;
-{% endif %}
-{% endfor %}
-<br>
-
 <div class="grn">
     {% for headerBalId, headerBal in headerBals.items %}
     {{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}
