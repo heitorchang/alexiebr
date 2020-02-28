@@ -8,4 +8,6 @@ urlpatterns = [
     path('addform/<int:presetid>/', views.addform, name='addform'),
     path('add', views.add, name='add'),
     path('hist/', views.hist, name='hist'),
+    path('acct/<int:acctid>/', views.acctdetail, name='acctdetail'),
+    path('adj/<int:acctid>/', views.adj, name='adj'),
 ]

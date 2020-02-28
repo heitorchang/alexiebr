@@ -1,0 +1,38 @@
+{% extends "alexieui/base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<a href="{% url 'alexieui:adj' acct.id %}">Adjust balance</a>
+<br>
+<br>
+
+<div class="accttxns">
+    <b>Dr {{ acct.name }}</b>
+    <table>
+        {% for t in drtxns %}
+        <tr>
+            <td>{{ t.date | date:"Y-m-d" }}</td>
+            <td class="rt">{{ t.amt | intcomma }}</td>
+            <td><a href="{% url 'alexieui:acctdetail' t.credit.id %}">{{ t.credit.name }}</a></td>
+            <td>{{ t.desc }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="accttxns">
+    <b>Cr {{ acct.name }}</b>
+    <table>
+        {% for t in crtxns %}
+        <tr>
+            <td>{{ t.date | date:"Y-m-d" }}</td>
+            <td class="rt">{{ t.amt | intcomma }}</td>
+            <td><a href="{% url 'alexieui:acctdetail' t.debit.id %}">{{ t.debit.name }}</a></td>
+            <td>{{ t.desc }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

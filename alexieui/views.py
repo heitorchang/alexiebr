@@ -1,3 +1,4 @@
+from decimal import Decimal
 from collections import OrderedDict
 from django.shortcuts import render, redirect
 from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
@@ -17,13 +18,13 @@ def index(request):
     for atype in AcctType.objects.all():
         atypes[atype.id] = atype
         atypes[atype.id].accts = []
-        atypes[atype.id].bal = 0
+        atypes[atype.id].bal = Decimal("0.00")
 
         
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
-        accts[acct.id].bal = 0
+        accts[acct.id].bal = Decimal("0.00")
 
         
     # alter balances
@@ -53,7 +54,7 @@ def index(request):
     # get header bal accts
     for headerBal in HeaderBal.objects.filter(user=request.user):
         headerBals[headerBal.id] = headerBal
-        headerBals[headerBal.id].bal = 0        
+        headerBals[headerBal.id].bal = Decimal("0.00")
         headerAcctIds.add(headerBal.id)
 
     for t in Txn.objects.filter(user=request.user):
@@ -121,3 +122,57 @@ def add(request):
                     
 def hist(request):
     return render(request, 'alexieui/hist.html')
+
+
+def acctdetail(request, acctid):
+    acct = Acct.objects.get(user=request.user, id=acctid)
+    
+    startdate = request.GET.get('startdate', '2000-01-01')
+    enddate = request.GET.get('enddate', '2100-01-01')
+    numtxns = int(request.GET.get('numtxns', 30))
+
+    drtxns = []
+    crtxns = []
+    totaltxns = 0
+    
+    for txn in Txn.objects.filter(user=request.user,
+                                  date__gte=startdate,
+                                  date__lte=enddate).order_by('-date', '-id'):
+        if totaltxns >= numtxns:
+            break
+        
+        if txn.debit == acct:
+            drtxns.append(txn)
+            totaltxns += 1
+
+        if txn.credit == acct:
+            crtxns.append(txn)
+            totaltxns += 1
+    
+
+    return render(request, 'alexieui/acctdetail.html',
+                  {'acct': acct,
+                   'drtxns': drtxns,
+                   'crtxns': crtxns})
+
+
+def adj(request, acctid):
+    if request.method == "POST":
+        pass
+    else:
+        acct = Acct.objects.get(user=request.user, id=acctid)
+        acct.bal = Decimal('0.00')
+        
+        # get all-time balance
+        for t in Txn.objects.filter(user=request.user):
+            if t.debit.id == acctid:
+                acct.bal += t.amt * acct.acctType.sign
+            
+            if t.credit.id == acctid:
+                acct.bal -= t.amt * acct.acctType.sign
+
+        allaccts = Acct.objects.filter(user=request.user)
+        
+        return render(request, 'alexieui/adjform.html',
+                      {'acct': acct,
+                       'allaccts': allaccts})
