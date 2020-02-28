@@ -2,6 +2,14 @@
 
 {% block content %}
 
+{% for preset in presets %}
+<a href="{% url 'alexieui:addform' preset.id %}">{{ preset.name }}</a>
+{% if not forloop.last %}
+&bullet;
+{% endif %}
+
+{% endfor %}
+<br>
 Date range: {{ startdate }} to {{ enddate }}
 <br><br>
 
@@ -14,7 +22,8 @@ Date range: {{ startdate }} to {{ enddate }}
 {{ a.name }} {{ a.bal }}<br>
 {% endfor %}
 
-Total: {{ at.bal }}
+<br>
+<b>Total:</b> {{ at.bal }}
 </div>
 {% endfor %}
 

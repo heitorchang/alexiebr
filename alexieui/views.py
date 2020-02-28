@@ -4,6 +4,9 @@ from acct.models import AcctType, Acct, Txn, Preset
 
 
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect('admin:index')
+    
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
         
@@ -40,10 +43,14 @@ def index(request):
         atypes[acct.acctType.id].accts.append(acct)
         atypes[acct.acctType.id].bal += acct.bal
         
+
+    # get presets
+    presets = Preset.objects.filter(user=request.user)
     
     return render(request, 'alexieui/index.html',
                   {'startdate': startdate,
                    'enddate': enddate,
+                   'presets': presets,
                    'atypes': atypes})
 
 

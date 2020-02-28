@@ -1,3 +1,4 @@
 [ok] homepage GET start and end dates
 [ok] preset model fixes dr or cr, an acct and acctType to populate other select
 [  ] login page, copy students
+[  ] copy adj bal from AB
