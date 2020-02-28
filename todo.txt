@@ -5,5 +5,6 @@
 [  ] hard-coded calendar with links to months
 [  ] this month link: ?startdate=Y-m-01
 [  ] account page separates this acct dr or this acct cr txns
+[  ] variable number of txns in acct page
 [  ] header with selected all-time balances for assets (AB footer)
 [  ] format thousands
