@@ -43,13 +43,17 @@
     <body>
         <a href="{% url 'alexieui:index' %}">AlexieBr</a>
         &bullet;
-        <a href="{% url 'admin:index' %}">Admin</a>
+        <a href="{% url 'alexieui:index' %}?startdate={% now 'Y-m' %}-01">This month</a>
+        &bullet;
+        <a href="{% url 'alexieui:hist' %}">Yr-mo</a>
         &bullet;
         <a href="{% url 'alexieui:addform' 0 %}">GenTxn</a>
         &bullet;
-        <a href="{% url 'alexieui:index' %}?startdate={% now 'Y-m' %}-01">This month</a>
+        <a href="{% url 'alexieui:addform' 1 %}">nu exp</a>
         &bullet;
-        <a href="{% url 'alexieui:hist' %}">Monthly</a>
+        <a href="{% url 'alexieui:addform' 2 %}">wal exp</a>
+        &bullet;
+        <a href="{% url 'admin:index' %}">Admin</a>
         <hr>
         {% block content %}{% endblock %}
     </body>
