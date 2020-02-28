@@ -53,10 +53,10 @@ def index(request):
 
     # get header bal accts
     for headerBal in HeaderBal.objects.filter(user=request.user):
-        headerBals[headerBal.id] = headerBal
-        headerBals[headerBal.id].bal = Decimal("0.00")
-        headerAcctIds.add(headerBal.id)
-
+        headerBals[headerBal.acct.id] = headerBal
+        headerBals[headerBal.acct.id].bal = Decimal("0.00")
+        headerAcctIds.add(headerBal.acct.id)
+    
     for t in Txn.objects.filter(user=request.user):
         if t.debit.id in headerAcctIds:
             dracct = headerBals[t.debit.id]
@@ -66,9 +66,6 @@ def index(request):
             cracct = headerBals[t.credit.id]
             cracct.bal -= t.amt * accts[t.credit.id].acctType.sign
         
-
-    print(headerBals)
-    
     return render(request, 'alexieui/index.html',
                   {'startdate': startdate,
                    'enddate': enddate,
