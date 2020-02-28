@@ -8,3 +8,6 @@
 [  ] variable number of txns in acct page
 [  ] header with selected all-time balances for assets (AB footer)
 [  ] format thousands
+[  ] rename Generic txn to GenTxn
+[  ] margin-bottom on accttype
+[  ] budget page
