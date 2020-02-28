@@ -13,11 +13,15 @@
          a {
              text-decoration: none;
          }
+
+         td {
+             padding-right: 0.8em;
+         }
          
          .accttype {
              display: inline-block;
              vertical-align: top;
-             line-height: 2em;
+             line-height: 1.8em;
              margin-right: 1.4em;
              margin-bottom: 2em;
          }
@@ -37,23 +41,27 @@
              color: #062;
              margin: 0.8em 0;
          }
+
+         .nowr {
+             white-space: nowrap;
+         }
          
         </style>
     </head>
     <body>
-        <a href="{% url 'alexieui:index' %}">AlexieBr</a>
+        <a href="{% url 'alexieui:index' %}">All</a>
         &bullet;
-        <a href="{% url 'alexieui:index' %}?startdate={% now 'Y-m' %}-01">This month</a>
+        <a href="{% url 'alexieui:index' %}?startdate={% now 'Y-m' %}-01">Now</a>
         &bullet;
-        <a href="{% url 'alexieui:hist' %}">Yr-mo</a>
+        <a href="{% url 'alexieui:hist' %}">Y-M</a>
         &bullet;
-        <a href="{% url 'alexieui:addform' 0 %}">GenTxn</a>
+        <a href="{% url 'alexieui:addform' 0 %}">txn</a>
         &bullet;
-        <a href="{% url 'alexieui:addform' 1 %}">nu exp</a>
+        <a href="{% url 'alexieui:addform' 1 %}">nu</a>
         &bullet;
-        <a href="{% url 'alexieui:addform' 2 %}">wal exp</a>
+        <a href="{% url 'alexieui:addform' 2 %}">wal</a>
         &bullet;
-        <a href="{% url 'admin:index' %}">Admin</a>
+        <a href="{% url 'admin:index' %}">adm</a>
         <hr>
         {% block content %}{% endblock %}
     </body>

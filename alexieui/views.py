@@ -82,12 +82,15 @@ def addform(request, presetid):
     else:
         preset = None
         selectAccts = None
+
+    numtxns = int(request.GET.get('numtxns', 10))
         
     allAccts = Acct.objects.filter(user=request.user)
-    latestTxns = Txn.objects.filter(user=request.user)[:15]
+    latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
     
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
+                   'numtxns': numtxns,
                    'preset': preset,
                    'allAccts': allAccts,
                    'selectAccts': selectAccts,
@@ -150,6 +153,8 @@ def acctdetail(request, acctid):
 
     return render(request, 'alexieui/acctdetail.html',
                   {'acct': acct,
+                   'startdate': startdate,
+                   'enddate': enddate,
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 

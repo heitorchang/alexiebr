@@ -5,7 +5,7 @@
 
 <div class="grn">
     {% for headerBalId, headerBal in headerBals.items %}
-    {{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}
+    <span class="nowr">{{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}</span>
     {% if not forloop.last %}
     &bullet;
     {% endif %}
@@ -23,7 +23,7 @@ Date range: {{ startdate }} to {{ enddate }}
     <table>
         {% for a in at.accts %}
         <tr>
-            <td><a href="{% url 'alexieui:acctdetail' a.id %}">{{ a.name }}</a></td>
+            <td><a href="{% url 'alexieui:acctdetail' a.id %}?startdate={{ startdate }}&enddate={{ enddate }}">{{ a.name }}</a></td>
             <td class="rt">{{ a.bal | intcomma }}</td>
         </tr>
         {% endfor %}

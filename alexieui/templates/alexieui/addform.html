@@ -1,4 +1,5 @@
 {% extends "alexieui/base.html" %}
+{% load humanize %}
 
 {% block content %}
 
@@ -108,11 +109,21 @@ Preset: {{ preset.name }}
     </table>
     
     <hr>
-    Latest transactions:
+    Showing newest {{ numtxns }} transactions <a href="{% url 'alexieui:addform' presetid %}?numtxns=30">(Show 30)</a>
+
+    <br>
     <br>
 
-    {% for txn in latestTxns %}
-    {{ txn }}<br>
-    {% endfor %}
+    <table>
+        {% for txn in latestTxns %}
+        <tr>
+            <td>{{ txn.date | date:"Y-m-d" }}</td>
+            <td class="rt">{{ txn.amt | intcomma }}</td>
+            <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
+            <td><a href="{% url 'alexieui:acctdetail' txn.debit.id %}">{{ txn.debit.name }}</a></td>
+            <td><a href="{% url 'alexieui:acctdetail' txn.credit.id %}">{{ txn.credit.name }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
 </form>
 {% endblock %}

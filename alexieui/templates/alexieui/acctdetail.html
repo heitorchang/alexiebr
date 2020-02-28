@@ -3,9 +3,11 @@
 
 {% block content %}
 
+Date range: {{ startdate }} to {{ enddate }}
+<br><br>
+
 <a href="{% url 'alexieui:adj' acct.id %}">Adjust balance</a>
-<br>
-<br>
+<br><br>
 
 <div class="accttxns">
     <b>Dr {{ acct.name }}</b>

@@ -1,6 +1,5 @@
 [ok] homepage GET start and end dates
 [ok] preset model fixes dr or cr, an acct and acctType to populate other select
-[NO] login page, copy students
 [ok] format thousands
 [ok] rename Generic txn to GenTxn
 [ok] hard-coded calendar with links to months
@@ -10,6 +9,5 @@
 [ok] account page separates this acct dr or this acct cr txns
 [ok] variable number of txns in acct page
 [ok] copy adj bal from AB
-
-[  ] links to acct detail respect selected dates
-[  ] budget page
+[ok] links to acct detail respect selected dates
+[NO] budget page
