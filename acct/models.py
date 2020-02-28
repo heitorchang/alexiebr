@@ -68,3 +68,17 @@ class Preset(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.name, self.user)
+
+
+class HeaderBal(models.Model):
+    """Account whose all-time balance appears in the index header"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    acct = models.ForeignKey(Acct, on_delete=models.CASCADE)
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return "{} ({})".format(self.acct.name, self.user)

@@ -7,4 +7,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('addform/<int:presetid>/', views.addform, name='addform'),
     path('add', views.add, name='add'),
+    path('hist/', views.hist, name='hist'),
 ]

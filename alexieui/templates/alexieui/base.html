@@ -10,10 +10,25 @@
         
         <title>AlexieBr</title>
         <style>
+         a {
+             text-decoration: none;
+         }
+         
          .accttype {
              display: inline-block;
              vertical-align: top;
-             margin-right: 2em;
+             line-height: 2em;
+             margin-right: 1.4em;
+             margin-bottom: 2em;
+         }
+
+         .rt {
+             text-align: right;
+         }
+
+         .grn {
+             color: #062;
+             margin: 0.8em 0;
          }
          
         </style>
@@ -23,7 +38,11 @@
         &bullet;
         <a href="{% url 'admin:index' %}">Admin</a>
         &bullet;
-        <a href="{% url 'alexieui:addform' 0 %}">Generic Txn</a>
+        <a href="{% url 'alexieui:addform' 0 %}">GenTxn</a>
+        &bullet;
+        <a href="{% url 'alexieui:index' %}?startdate={% now 'Y-m' %}-01">This month</a>
+        &bullet;
+        <a href="{% url 'alexieui:hist' %}">Monthly</a>
         <hr>
         {% block content %}{% endblock %}
     </body>

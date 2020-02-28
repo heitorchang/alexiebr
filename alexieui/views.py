@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from django.shortcuts import render, redirect
-from acct.models import AcctType, Acct, Txn, Preset
+from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
 
 
 def index(request):
@@ -12,7 +12,6 @@ def index(request):
         
     atypes = OrderedDict()
     accts = OrderedDict()
-
     
     # Initialize dict of account types
     for atype in AcctType.objects.all():
@@ -37,7 +36,7 @@ def index(request):
         dracct.bal += t.amt * dracct.acctType.sign
         cracct.bal -= t.amt * cracct.acctType.sign
 
-        
+
     # place account into its account type's list
     for acct in accts.values():
         atypes[acct.acctType.id].accts.append(acct)
@@ -46,11 +45,34 @@ def index(request):
 
     # get presets
     presets = Preset.objects.filter(user=request.user)
+
+    # get all-time header balances
+    headerBals = OrderedDict()
+    headerAcctIds = set()
+
+    # get header bal accts
+    for headerBal in HeaderBal.objects.filter(user=request.user):
+        headerBals[headerBal.id] = headerBal
+        headerBals[headerBal.id].bal = 0        
+        headerAcctIds.add(headerBal.id)
+
+    for t in Txn.objects.filter(user=request.user):
+        if t.debit.id in headerAcctIds:
+            dracct = headerBals[t.debit.id]
+            dracct.bal += t.amt * accts[t.debit.id].acctType.sign
+            
+        if t.credit.id in headerAcctIds:
+            cracct = headerBals[t.credit.id]
+            cracct.bal -= t.amt * accts[t.credit.id].acctType.sign
+        
+
+    print(headerBals)
     
     return render(request, 'alexieui/index.html',
                   {'startdate': startdate,
                    'enddate': enddate,
                    'presets': presets,
+                   'headerBals': headerBals,
                    'atypes': atypes})
 
 
@@ -97,3 +119,5 @@ def add(request):
                       {'msg': "Could not process request."})
         
                     
+def hist(request):
+    return render(request, 'alexieui/hist.html')

@@ -1,4 +1,5 @@
 {% extends "alexieui/base.html" %}
+{% load humanize %}
 
 {% block content %}
 
@@ -7,23 +8,39 @@
 {% if not forloop.last %}
 &bullet;
 {% endif %}
-
 {% endfor %}
 <br>
+
+<div class="grn">
+    {% for headerBalId, headerBal in headerBals.items %}
+    {{ headerBal.acct.name }} {{ headerBal.bal }}
+    {% if not forloop.last %}
+    &bullet;
+    {% endif %}
+    {% endfor %}
+</div>
+
+
 Date range: {{ startdate }} to {{ enddate }}
 <br><br>
 
 {% for atid, at in atypes.items %}
 <div class="accttype">
-{{ at }}
-<hr>
+    <b>{{ at }}</b><br>
 
-{% for a in at.accts %}
-{{ a.name }} {{ a.bal }}<br>
-{% endfor %}
+    <table>
+        {% for a in at.accts %}
+        <tr>
+            <td>{{ a.name }}</td>
+            <td class="rt">{{ a.bal | intcomma }}</td>
+        </tr>
+        {% endfor %}
 
-<br>
-<b>Total:</b> {{ at.bal }}
+        <tr>
+            <td><b>Total:</b></td>
+            <td class="rt">{{ at.bal | intcomma }}</td>
+        </tr>
+    </table>
 </div>
 {% endfor %}
 
