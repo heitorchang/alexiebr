@@ -3,6 +3,15 @@
 
 {% block content %}
 
+<div class="grn">
+    {% for headerBalId, headerBal in headerBals.items %}
+    <span class="nowr">{{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}</span>
+    {% if not forloop.last %}
+    &bullet;
+    {% endif %}
+    {% endfor %}
+</div>
+
 {% if presetid != 0 %}
 Preset: {{ preset.name }}
 <br><br>
@@ -117,7 +126,7 @@ Preset: {{ preset.name }}
     <table>
         {% for txn in latestTxns %}
         <tr>
-            <td>{{ txn.date | date:"Y-m-d" }}</td>
+            <td>{{ txn.date | date:"D d M" }}</td>
             <td class="rt">{{ txn.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
             <td><a href="{% url 'alexieui:acctdetail' txn.debit.id %}">{{ txn.debit.name }}</a></td>

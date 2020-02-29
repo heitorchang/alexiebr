@@ -5,6 +5,29 @@ from django.shortcuts import render, redirect
 from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
 
 
+def getHeaderBals(request):
+    # get all-time header balances
+    headerBals = OrderedDict()
+    headerAcctIds = set()
+
+    # get header bal accts
+    for headerBal in HeaderBal.objects.filter(user=request.user):
+        headerBals[headerBal.acct.id] = headerBal
+        headerBals[headerBal.acct.id].bal = Decimal("0.00")
+        headerAcctIds.add(headerBal.acct.id)
+    
+    for t in Txn.objects.filter(user=request.user):
+        if t.debit.id in headerAcctIds:
+            dracct = headerBals[t.debit.id]
+            dracct.bal += t.amt * dracct.acct.acctType.sign
+            
+        if t.credit.id in headerAcctIds:
+            cracct = headerBals[t.credit.id]
+            cracct.bal -= t.amt * cracct.acct.acctType.sign
+
+    return headerBals
+
+            
 def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
@@ -48,25 +71,8 @@ def index(request):
     # get presets
     presets = Preset.objects.filter(user=request.user)
 
-    # get all-time header balances
-    headerBals = OrderedDict()
-    headerAcctIds = set()
+    headerBals = getHeaderBals(request)
 
-    # get header bal accts
-    for headerBal in HeaderBal.objects.filter(user=request.user):
-        headerBals[headerBal.acct.id] = headerBal
-        headerBals[headerBal.acct.id].bal = Decimal("0.00")
-        headerAcctIds.add(headerBal.acct.id)
-    
-    for t in Txn.objects.filter(user=request.user):
-        if t.debit.id in headerAcctIds:
-            dracct = headerBals[t.debit.id]
-            dracct.bal += t.amt * accts[t.debit.id].acctType.sign
-            
-        if t.credit.id in headerAcctIds:
-            cracct = headerBals[t.credit.id]
-            cracct.bal -= t.amt * accts[t.credit.id].acctType.sign
-        
     return render(request, 'alexieui/index.html',
                   {'startdate': startdate,
                    'enddate': enddate,
@@ -87,11 +93,14 @@ def addform(request, presetid):
         
     allAccts = Acct.objects.filter(user=request.user)
     latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
+
+    headerBals = getHeaderBals(request)
     
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
                    'numtxns': numtxns,
                    'preset': preset,
+                   'headerBals': headerBals,
                    'allAccts': allAccts,
                    'selectAccts': selectAccts,
                    'latestTxns': latestTxns})
@@ -104,7 +113,7 @@ def add(request):
         addform = request.POST['addform']
         date = request.POST['date']
         desc = request.POST['desc']
-        amt = request.POST['amt']
+        amt = request.POST['amt'].replace(',', '.')
         debit = Acct.objects.get(user=user, id=int(request.POST['debit']))
         credit = Acct.objects.get(user=user, id=int(request.POST['credit']))
 
