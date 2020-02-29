@@ -181,7 +181,7 @@ def adj(request, acctid):
             acct.bal -= t.amt * acct.acctType.sign
             
     if request.method == "POST":
-        diff = Decimal(request.POST.get('newbal', '0.00')) - acct.bal
+        diff = Decimal(request.POST.get('newbal', '0.00').replace(',', '.')) - acct.bal
         sign = acct.acctType.sign
         
         if diff < 0:
