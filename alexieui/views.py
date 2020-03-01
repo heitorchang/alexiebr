@@ -162,7 +162,7 @@ def acctdetail(request, acctid):
     
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
-    numtxns = int(request.GET.get('numtxns', 30))
+    numtxns = int(request.GET.get('numtxns', 100))
 
     drtxns = []
     crtxns = []
@@ -189,6 +189,7 @@ def acctdetail(request, acctid):
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'datelabel': getDateLabel(startdate),
                    'alltimebal': getAllTimeBal(request, acctid),
+                   'numtxns': numtxns,
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 
