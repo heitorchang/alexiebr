@@ -27,7 +27,16 @@ def getHeaderBals(request):
 
     return headerBals
 
-            
+
+def getDateLabel(startdate):
+    if startdate == "2000-01-01":
+        return "All time"
+    elif startdate == datetime.date.today().strftime("%Y-%m-%d"):
+        return "Now"
+    else:
+        return "Month"
+
+    
 def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
@@ -76,6 +85,7 @@ def index(request):
     return render(request, 'alexieui/index.html',
                   {'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
+                   'datelabel': getDateLabel(startdate),
                    'presets': presets,
                    'headerBals': headerBals,
                    'atypes': atypes})
@@ -164,6 +174,7 @@ def acctdetail(request, acctid):
                   {'acct': acct,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
+                   'datelabel': getDateLabel(startdate),
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 

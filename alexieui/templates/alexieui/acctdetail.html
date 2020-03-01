@@ -3,7 +3,8 @@
 
 {% block content %}
 
-Date: {{ startdate | date:"d M Y" }} - {{ enddate | date:"d M Y" }}
+<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }}
+
 <br><br>
 
 <a href="{% url 'alexieui:adj' acct.id %}">Adjust balance</a>
