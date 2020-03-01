@@ -28,6 +28,19 @@ def getHeaderBals(request):
     return headerBals
 
 
+def getAllTimeBal(request, acctid):
+    bal = 0
+    acct = Acct.objects.get(user=request.user, id=acctid)
+
+    for t in Txn.objects.filter(user=request.user):
+        if t.debit.id == acctid:
+            bal += t.amt * acct.acctType.sign
+            
+        if t.credit.id == acctid:
+            bal -= t.amt * acct.acctType.sign
+    return bal
+
+            
 def getDateLabel(startdate):
     if startdate == "2000-01-01":
         return "All time"
@@ -175,6 +188,7 @@ def acctdetail(request, acctid):
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'datelabel': getDateLabel(startdate),
+                   'alltimebal': getAllTimeBal(request, acctid),
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 
