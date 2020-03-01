@@ -12,7 +12,7 @@
     {% endfor %}
 </div>
 
-Date: {{ startdate }} to {{ enddate }}
+Date: {{ startdate | date:"d M Y" }} - {{ enddate | date:"d M Y" }}
 <br>
 
 {% for atid, at in atypes.items %}
@@ -22,7 +22,7 @@ Date: {{ startdate }} to {{ enddate }}
     <table>
         {% for a in at.accts %}
         <tr>
-            <td><a href="{% url 'alexieui:acctdetail' a.id %}?startdate={{ startdate }}&enddate={{ enddate }}">{{ a.name }}</a></td>
+            <td><a href="{% url 'alexieui:acctdetail' a.id %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">{{ a.name }}</a></td>
             <td class="rt">{{ a.bal | intcomma }}</td>
         </tr>
         {% endfor %}

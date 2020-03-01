@@ -32,7 +32,7 @@ def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
     
-    startdate = request.GET.get('startdate', '2000-01-01')
+    startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-%d"))
     enddate = request.GET.get('enddate', '2100-01-01')
         
     atypes = OrderedDict()
@@ -74,8 +74,8 @@ def index(request):
     headerBals = getHeaderBals(request)
 
     return render(request, 'alexieui/index.html',
-                  {'startdate': startdate,
-                   'enddate': enddate,
+                  {'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
+                   'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'presets': presets,
                    'headerBals': headerBals,
                    'atypes': atypes})
@@ -162,8 +162,8 @@ def acctdetail(request, acctid):
 
     return render(request, 'alexieui/acctdetail.html',
                   {'acct': acct,
-                   'startdate': startdate,
-                   'enddate': enddate,
+                   'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
+                   'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 
@@ -214,3 +214,8 @@ def adj(request, acctid):
         return render(request, 'alexieui/adjform.html',
                       {'acct': acct,
                        'allaccts': allaccts})
+
+
+def budget(request):
+    return render(request, 'alexieui/redirect.html',
+                      {'msg': "Not implemented yet."})

@@ -10,4 +10,5 @@ urlpatterns = [
     path('hist/', views.hist, name='hist'),
     path('acct/<int:acctid>/', views.acctdetail, name='acctdetail'),
     path('adj/<int:acctid>/', views.adj, name='adj'),
+    path('budget/', views.budget, name='budget'),
 ]
