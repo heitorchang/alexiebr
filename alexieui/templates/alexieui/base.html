@@ -45,30 +45,39 @@
          .nowr {
              white-space: nowrap;
          }
-         
+
+         .nav {
+             background-color: #276;
+             padding: 0.2em;
+             color: #9CF;
+         }
+
+         .nav a {
+             color: #FFF;
+         }
         </style>
     </head>
     <body>
-        <a href="{% url 'alexieui:index' %}?startdate=2000-01-01&enddate=2100-01-01">all</a>
-        &bullet;
-        <a href="{% url 'alexieui:index' %}">now</a>
-        &bullet;
-	<a href="{% url 'alexieui:budget' %}">bdgt</a>
-	&bullet;
-        <a href="{% url 'alexieui:addform' 0 %}">txn</a>
-        &bullet;
-        <a href="{% url 'alexieui:addform' 3 %}">nux</a>
-        &bullet;
-        <a href="{% url 'alexieui:addform' 1 %}">nus</a>
-        &bullet;
-        <a href="{% url 'alexieui:addform' 2 %}">wals</a>
-        &bullet;
-        <a href="{% url 'alexieui:hist' %}">Y-m</a>
+        <div class="nav">
+            <a href="{% url 'alexieui:index' %}?startdate=2000-01-01&enddate=2100-01-01">all</a>
+            &bullet;
+            <a href="{% url 'alexieui:index' %}">now</a>
+            &bullet;
+	    <a href="{% url 'alexieui:budget' %}">bdgt</a>
+	    &bullet;
+            <a href="{% url 'alexieui:addform' 0 %}">txn</a>
+            &bullet;
+            <a href="{% url 'alexieui:addform' 3 %}">nux</a>
+            &bullet;
+            <a href="{% url 'alexieui:addform' 1 %}">nus</a>
+            &bullet;
+            <a href="{% url 'alexieui:addform' 2 %}">wals</a>
+            &bullet;
+            <a href="{% url 'alexieui:hist' %}">Y-m</a>
+        </div>
 
-        <hr>
         {% block content %}{% endblock %}
-
-        <hr>
+        <br>
         <a href="{% url 'admin:index' %}">AlexieBr Admin</a>
         <br><br><br><br><br>
     </body>
