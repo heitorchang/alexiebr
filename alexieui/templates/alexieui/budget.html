@@ -12,7 +12,7 @@
     {% endfor %}
 </div>
 
-<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }}
+<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }}{% if datelabel == "Now" %}, {{ percentelapsed }}% of month elapsed{% endif %}
 <br>
 
 Acct Budgets

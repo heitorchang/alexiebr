@@ -1,4 +1,5 @@
-import datetime 
+import datetime
+from calendar import monthrange
 from decimal import Decimal
 from math import ceil, floor
 from collections import OrderedDict
@@ -291,6 +292,15 @@ def budget(request):
         total_remaining = "({:,})".format(abs(total_remaining)).replace(",", ".")
     else:
         total_remaining = "{:,}".format(total_remaining).replace(",", ".")
+
+    # percent of month elapsed
+    mytoday = datetime.date.today()
+    thisyear = int(mytoday.strftime("%Y"))
+    thismonth = int(mytoday.strftime("%m"))
+    thisday = int(mytoday.strftime("%d"))
+
+    lastday = monthrange(thisyear, thismonth)[1]
+    percentelapsed = ceil((thisday - 1) / lastday * 100)
     
     headerBals = getHeaderBals(request)
 
@@ -303,4 +313,5 @@ def budget(request):
                    'budget_total': budget_total,
                    'total_percent': total_percent,
                    'total_remaining': total_remaining,
+                   'percentelapsed': percentelapsed,
                    'headerBals': headerBals})
