@@ -44,7 +44,7 @@ def getAllTimeBal(request, acctid):
 def getDateLabel(startdate):
     if startdate == "2000-01-01":
         return "All time"
-    elif startdate == datetime.date.today().strftime("%Y-%m-%d"):
+    elif startdate == datetime.date.today().strftime("%Y-%m-01"):
         return "Now"
     else:
         return "Month"
@@ -54,7 +54,7 @@ def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
     
-    startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-%d"))
+    startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
     enddate = request.GET.get('enddate', '2100-01-01')
         
     atypes = OrderedDict()
