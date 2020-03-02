@@ -1,0 +1,55 @@
+{% extends "alexieui/base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+<div class="grn">
+    {% for headerBalId, headerBal in headerBals.items %}
+    <span class="nowr">{{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}</span>
+    {% if not forloop.last %}
+    &bullet;
+    {% endif %}
+    {% endfor %}
+</div>
+
+<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }}
+<br>
+
+Acct Budgets
+
+<table>
+    {% for acctid, acct in accts.items %}
+    <tr>
+        <td><a href="{% url 'alexieui:acctdetail' acct.id %}">{{ acct.name }}</a></td>
+        <td class="rt">{{ acct.bal | intcomma }} /</td>
+        <td class="rt">{{ acct.budget | intcomma }} =</td>
+        <td class="rt">{{ acct.percent }}%</td>
+        <td class="rt">
+            {% if "(" in acct.remaining %}
+            <span style="color: red;">{{ acct.remaining }}</span>
+            {% else %}
+            {{ acct.remaining }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="5"><hr></td>
+    </tr>
+    
+    <tr>
+        <td><b>Total</b></td>
+        <td class="rt">{{ spent_total | intcomma }} /</td>
+        <td class="rt">{{ budget_total | intcomma }} =</td>
+        <td class="rt">{{ total_percent }}%</td>
+        <td class="rt">
+            {% if "(" in total_remaining %}
+            <span style="color: red;">{{ total_remaining }}</span>
+            {% else %}
+            {{ total_remaining }}
+            {% endif %}
+        </td>
+    </tr>
+</table>
+
+{% endblock %}

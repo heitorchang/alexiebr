@@ -1,5 +1,6 @@
 import datetime 
 from decimal import Decimal
+from math import ceil, floor
 from collections import OrderedDict
 from django.shortcuts import render, redirect
 from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
@@ -243,5 +244,62 @@ def adj(request, acctid):
 
 
 def budget(request):
-    return render(request, 'alexieui/redirect.html',
-                      {'msg': "Not implemented yet."})
+    accts = OrderedDict()
+    acctids = set()
+    startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
+    enddate = request.GET.get('enddate', '2100-01-01')
+        
+    spent_total = 0
+    budget_total = 0
+    
+    # assign an account to dict of all accounts
+    for acct in Acct.objects.filter(user=request.user, budget__gt=0):
+        accts[acct.id] = acct
+        accts[acct.id].bal = Decimal("0.00")
+        acctids.add(acct.id)
+        budget_total += acct.budget
+
+
+    # alter balances
+    for t in Txn.objects.filter(user=request.user,
+                                date__gte=startdate,
+                                date__lte=enddate):
+        if t.debit.id in acctids:
+            dracct = accts[t.debit.id]
+            dracct.bal += t.amt * dracct.acctType.sign
+
+        if t.credit.id in acctids:
+            cracct = accts[t.credit.id]
+            cracct.bal -= t.amt * cracct.acctType.sign
+
+
+    # update spent_total
+    for acct in accts.values():
+        spent_total += acct.bal
+
+        # compute percentages and remaining
+        acct.percent = ceil(acct.bal / acct.budget * 100)
+        acct.remaining = floor(acct.budget - acct.bal)
+        if acct.remaining < 0:
+            acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
+        else:
+            acct.remaining = "{:,}".format(acct.remaining).replace(",", ".")
+    
+    total_percent = ceil(spent_total / budget_total * 100)
+    total_remaining = floor(budget_total - spent_total)
+    if total_remaining < 0:
+        total_remaining = "({:,})".format(abs(total_remaining)).replace(",", ".")
+    else:
+        total_remaining = "{:,}".format(total_remaining).replace(",", ".")
+    
+    headerBals = getHeaderBals(request)
+
+    return render(request, 'alexieui/budget.html',
+                  {'accts': accts,
+                   'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
+                   'datelabel': getDateLabel(startdate),
+                   'spent_total': spent_total,
+                   'budget_total': budget_total,
+                   'total_percent': total_percent,
+                   'total_remaining': total_remaining,
+                   'headerBals': headerBals})
