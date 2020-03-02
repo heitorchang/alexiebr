@@ -297,6 +297,7 @@ def budget(request):
     return render(request, 'alexieui/budget.html',
                   {'accts': accts,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
+                   'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'datelabel': getDateLabel(startdate),
                    'spent_total': spent_total,
                    'budget_total': budget_total,

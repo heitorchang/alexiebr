@@ -20,7 +20,7 @@ Acct Budgets
 <table>
     {% for acctid, acct in accts.items %}
     <tr>
-        <td><a href="{% url 'alexieui:acctdetail' acct.id %}">{{ acct.name }}</a></td>
+        <td><a href="{% url 'alexieui:acctdetail' acct.id %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">{{ acct.name }}</a></td>
         <td class="rt">{{ acct.bal | intcomma }} /</td>
         <td class="rt">{{ acct.budget | intcomma }} =</td>
         <td class="rt">{{ acct.percent }}%</td>

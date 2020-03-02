@@ -12,8 +12,8 @@
     {% endfor %}
 </div>
 
-<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }}
-<br>
+<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
+    <br>
 
 {% for atid, at in atypes.items %}
 <div class="accttype">
