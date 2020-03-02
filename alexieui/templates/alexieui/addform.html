@@ -126,7 +126,7 @@ Preset: {{ preset.name }}
     <table>
         {% for txn in latestTxns %}
         <tr>
-            <td>{{ txn.date | date:"D d M" }}</td>
+            <td class="tlistdate">{{ txn.date | date:"D d M" }}</td>
             <td class="rt">{{ txn.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
             <td><a href="{% url 'alexieui:acctdetail' txn.debit.id %}">{{ txn.debit.name }}</a></td>

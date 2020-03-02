@@ -18,7 +18,7 @@ Number of transactions: {{ numtxns }}
     <table>
         {% for t in drtxns %}
         <tr>
-            <td>{{ t.date | date:"D d M" }}</td>
+            <td class="tlistdate">{{ t.date | date:"D d M" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>
             <td><a href="{% url 'alexieui:acctdetail' t.credit.id %}">{{ t.credit.name }}</a></td>
@@ -32,7 +32,7 @@ Number of transactions: {{ numtxns }}
     <table>
         {% for t in crtxns %}
         <tr>
-            <td>{{ t.date | date:"D d M" }}</td>
+            <td class="tlistdate">{{ t.date | date:"D d M" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>
             <td><a href="{% url 'alexieui:acctdetail' t.debit.id %}">{{ t.debit.name }}</a></td>
