@@ -17,7 +17,7 @@ Number of transactions: {{ numtxns }}
     <b>Dr {{ acct.name }}</b>
     <table>
         {% for t in drtxns %}
-        <tr>
+        <tr class="tlist">
             <td class="tlistdate">{{ t.date | date:"D d M" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>
@@ -31,7 +31,7 @@ Number of transactions: {{ numtxns }}
     <b>Cr {{ acct.name }}</b>
     <table>
         {% for t in crtxns %}
-        <tr>
+        <tr class="tlist">
             <td class="tlistdate">{{ t.date | date:"D d M" }}</td>
             <td class="rt">{{ t.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ t.id }}/change/">{{ t.desc }}</a></td>

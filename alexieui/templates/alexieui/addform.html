@@ -125,7 +125,7 @@ Preset: {{ preset.name }}
 
     <table>
         {% for txn in latestTxns %}
-        <tr>
+        <tr class="tlist">
             <td class="tlistdate">{{ txn.date | date:"D d M" }}</td>
             <td class="rt">{{ txn.amt | intcomma }}</td>
             <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
