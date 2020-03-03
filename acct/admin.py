@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import AcctType, Acct, Txn, Preset, HeaderBal
 
 class TxnAdmin(admin.ModelAdmin):
-    ordering = ['-id']
+    ordering = ['user', '-id']
     search_fields = ['desc']
     
 
