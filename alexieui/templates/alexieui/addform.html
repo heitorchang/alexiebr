@@ -11,12 +11,15 @@
     {% endif %}
     {% endfor %}
 </div>
+<br>
 
 {% if presetid != 0 %}
 Preset: {{ preset.name }}
-<br>
+{% else %}
+Add transaction
 {% endif %}
 
+<br>
 <form action="{% url 'alexieui:add' %}" method="POST">
     {% csrf_token %}
     <input type="hidden" name="addform" value="{{ presetid }}">
@@ -118,7 +121,9 @@ Preset: {{ preset.name }}
     </table>
     
     <hr>
-    Showing newest {{ numtxns }} transactions <a href="{% url 'alexieui:addform' presetid %}?numtxns=30">(Show 30)</a>
+    Showing newest {{ numtxns }} transactions
+    &bullet;
+    <a href="{% url 'alexieui:addform' presetid %}?numtxns=30">Show 30</a>
 
     <br>
     <br>
