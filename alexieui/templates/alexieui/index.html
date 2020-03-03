@@ -15,9 +15,7 @@
 <span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
 <br>
 
-{% for atid, at in atypes.items %}
-{% if at.accts|length %}
-<div class="accttype bdr inl">
+{% for atid, at in atypes.items %}{% if at.accts|length %}<div class="accttype bdr inl">
     <b>{{ at }}</b><br>
 
     <table>
@@ -37,8 +35,6 @@
             <td class="rt">{{ at.bal | intcomma }}</td>
         </tr>
     </table>
-</div>
-{% endif %}
-{% endfor %}
+</div>{% endif %}{% endfor %}
 
 {% endblock %}
