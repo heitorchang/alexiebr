@@ -11,4 +11,5 @@ urlpatterns = [
     path('acct/<int:acctid>/', views.acctdetail, name='acctdetail'),
     path('adj/<int:acctid>/', views.adj, name='adj'),
     path('budget/', views.budget, name='budget'),
+    path('search/', views.search, name='search'),
 ]

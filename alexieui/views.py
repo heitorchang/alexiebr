@@ -315,3 +315,26 @@ def budget(request):
                    'total_remaining': total_remaining,
                    'percentelapsed': percentelapsed,
                    'headerBals': headerBals})
+
+
+def search(request):
+    q = request.GET.get('q', '')
+    numtxns = int(request.GET.get('numtxns', 30))
+    startdate = request.GET.get('startdate', '2000-01-01')
+    enddate = request.GET.get('enddate', '2100-01-01')
+    
+    if len(q) > 0:
+        msg = "Results for {} ({} transactions)".format(q, numtxns)
+        txns = Txn.objects.filter(user=request.user,
+                                  desc__icontains=q,
+                                  date__gte=startdate,
+                                  date__lte=enddate)[:numtxns]
+    else:
+        msg = ""
+        txns = []
+        
+    return render(request, 'alexieui/search.html',
+                  {'txns': txns,
+                   'startdate': startdate,
+                   'enddate': enddate,
+                   'msg': msg})

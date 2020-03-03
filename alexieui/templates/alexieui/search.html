@@ -1,0 +1,40 @@
+{% extends "alexieui/base.html" %}
+{% load humanize %}
+
+{% block content %}
+<br>
+<form action="" method="GET">
+    <table>
+        <tr>
+            <td>Search</td>
+            <td><input type="text" name="q" autofocus></td>
+        </tr>
+        <tr>
+            <td>Start</td>
+            <td><input type="text" name="startdate" value="{{ startdate }}"></td>
+        </tr>
+        <tr>
+            <td>End</td>
+            <td><input type="text" name="enddate" value="{{ enddate }}"></td>
+        </tr>
+    </table>
+    <input type="submit">
+</form>
+<br>
+{{ msg }}
+
+<br>
+
+<table>
+    {% for txn in txns %}
+    <tr class="tlist">
+        <td class="tlistdate">{{ txn.date | date:"D d M" }}</td>
+        <td class="rt">{{ txn.amt | intcomma }}</td>
+        <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
+        <td><a href="{% url 'alexieui:acctdetail' txn.debit.id %}">{{ txn.debit.name }}</a></td>
+        <td><a href="{% url 'alexieui:acctdetail' txn.credit.id %}">{{ txn.credit.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

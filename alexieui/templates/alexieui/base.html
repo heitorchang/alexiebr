@@ -78,7 +78,7 @@
             &bullet;
             <a href="{% url 'alexieui:index' %}">now</a>
             &bullet;
-	    <a href="{% url 'alexieui:budget' %}">bdgt</a>
+	    <a href="{% url 'alexieui:budget' %}">bdg</a>
 	    &bullet;
             <a href="{% url 'alexieui:addform' 0 %}">txn</a>
             &bullet;
@@ -88,7 +88,9 @@
             &bullet;
             <a href="{% url 'alexieui:addform' 2 %}">wals</a>
             &bullet;
-            <a href="{% url 'alexieui:hist' %}">Y-m</a>
+            <a href="{% url 'alexieui:search' %}">srch</a>
+            &bullet;
+            <a href="{% url 'alexieui:hist' %}">Ym</a>
         </div>
 
         {% block content %}{% endblock %}
