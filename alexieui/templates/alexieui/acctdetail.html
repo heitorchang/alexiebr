@@ -13,8 +13,10 @@ All time balance: {{ alltimebal | intcomma }}
 
 Number of transactions: {{ numtxns }}
 <br>
-<div class="accttxns">
-    <b>Dr {{ acct.name }}</b>
+<div class="accttxns inl bdr">
+    <b>Dr {{ acct.name }}</b> {{ drtotal | intcomma }}
+    <br><br>
+    
     <table>
         {% for t in drtxns %}
         <tr class="tlist">
@@ -27,8 +29,10 @@ Number of transactions: {{ numtxns }}
     </table>
 </div>
 
-<div class="accttxns">
-    <b>Cr {{ acct.name }}</b>
+<div class="accttxns inl bdr">
+    <b>Cr {{ acct.name }}</b> {{ crtotal | intcomma }}
+    <br><br>
+
     <table>
         {% for t in crtxns %}
         <tr class="tlist">

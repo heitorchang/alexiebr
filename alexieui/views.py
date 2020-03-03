@@ -166,8 +166,12 @@ def acctdetail(request, acctid):
     enddate = request.GET.get('enddate', '2100-01-01')
     numtxns = int(request.GET.get('numtxns', 100))
 
+    drtotal = Decimal('0.00')
+    crtotal = Decimal('0.00')
+    
     drtxns = []
     crtxns = []
+    
     totaltxns = 0
     
     for txn in Txn.objects.filter(user=request.user,
@@ -178,10 +182,12 @@ def acctdetail(request, acctid):
         
         if txn.debit == acct:
             drtxns.append(txn)
+            drtotal += txn.amt
             totaltxns += 1
 
         if txn.credit == acct:
             crtxns.append(txn)
+            crtotal += txn.amt
             totaltxns += 1
     
 
@@ -192,6 +198,8 @@ def acctdetail(request, acctid):
                    'datelabel': getDateLabel(startdate),
                    'alltimebal': getAllTimeBal(request, acctid),
                    'numtxns': numtxns,
+                   'drtotal': drtotal,
+                   'crtotal': crtotal,
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 
