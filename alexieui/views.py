@@ -335,6 +335,7 @@ def search(request):
         
     return render(request, 'alexieui/search.html',
                   {'txns': txns,
+                   'q': q,
                    'startdate': startdate,
                    'enddate': enddate,
                    'msg': msg})
