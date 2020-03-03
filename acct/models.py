@@ -29,7 +29,7 @@ class Acct(models.Model):
     budget = models.DecimalField(max_digits=22, decimal_places=2, default=Decimal("0.00"))
     
     class Meta:
-        ordering = ['name']
+        ordering = ['user', 'name']
 
     def __str__(self):
         return "{} ({})".format(self.name, self.user)
@@ -46,7 +46,7 @@ class Txn(models.Model):
     credit = models.ForeignKey(Acct, on_delete=models.CASCADE, related_name="credit_txns")
     
     class Meta:
-        ordering = ['-id']
+        ordering = ['user', '-id']
 
     def __str__(self):
         return "{} {} {} ({})".format(self.date, self.desc, self.amt, self.user)
@@ -64,7 +64,7 @@ class Preset(models.Model):
     acctTypeSelect = models.ForeignKey(AcctType, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['isDebit', 'fixedAcct', 'acctTypeSelect']
+        ordering = ['user', 'isDebit', 'fixedAcct', 'acctTypeSelect']
 
     def __str__(self):
         return "{} ({})".format(self.name, self.user)
@@ -78,7 +78,7 @@ class HeaderBal(models.Model):
     order = models.IntegerField()
 
     class Meta:
-        ordering = ['order']
+        ordering = ['user', 'order']
 
     def __str__(self):
         return "{} ({})".format(self.acct.name, self.user)
