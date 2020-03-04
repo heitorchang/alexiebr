@@ -43,7 +43,7 @@ def getAllTimeBal(request, acctid):
     return bal
 
             
-def getDateLabel(startdate):
+def getDateLabel(startdate, enddate):
     if startdate == "2000-01-01":
         return "All time"
     elif startdate[-5:] == "01-01" and enddate[-5:] == "12-31":
@@ -102,7 +102,7 @@ def index(request):
     return render(request, 'alexieui/index.html',
                   {'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
-                   'datelabel': getDateLabel(startdate),
+                   'datelabel': getDateLabel(startdate, enddate),
                    'presets': presets,
                    'headerBals': headerBals,
                    'atypes': atypes})
@@ -197,7 +197,7 @@ def acctdetail(request, acctid):
                   {'acct': acct,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
-                   'datelabel': getDateLabel(startdate),
+                   'datelabel': getDateLabel(startdate, enddate),
                    'alltimebal': getAllTimeBal(request, acctid),
                    'numtxns': numtxns,
                    'drtotal': drtotal,
@@ -318,7 +318,7 @@ def budget(request):
                   {'accts': accts,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
-                   'datelabel': getDateLabel(startdate),
+                   'datelabel': getDateLabel(startdate, enddate),
                    'spent_total': spent_total,
                    'budget_total': budget_total,
                    'total_percent': total_percent,
