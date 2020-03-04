@@ -46,6 +46,8 @@ def getAllTimeBal(request, acctid):
 def getDateLabel(startdate):
     if startdate == "2000-01-01":
         return "All time"
+    elif startdate[-5:] == "01-01" and enddate[-5:] == "12-31":
+        return "Year"
     elif startdate == datetime.date.today().strftime("%Y-%m-01"):
         return "Now"
     else:
