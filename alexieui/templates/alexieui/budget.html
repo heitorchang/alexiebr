@@ -18,11 +18,11 @@
 <table>
     {% for acctid, acct in accts.items %}
     <tr>
-        <td><a href="{% url 'alexieui:acctdetail' acct.id %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">{{ acct.name }}</a></td>
-        <td class="rt">{{ acct.bal | intcomma }} /</td>
-        <td class="rt">{{ acct.budget | intcomma }} =</td>
-        <td class="rt">{{ acct.percent }}%</td>
-        <td class="rt">
+        <td class="nowr"><a href="{% url 'alexieui:acctdetail' acct.id %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">{{ acct.name }}</a></td>
+        <td class="rt nowr">{{ acct.bal | intcomma }} /</td>
+        <td class="rt nowr">{{ acct.budget | intcomma }} =</td>
+        <td class="rt nowr">{{ acct.percent }}%</td>
+        <td class="rt nowr">
             {% if "(" in acct.remaining %}
             <span style="color: red;">{{ acct.remaining }}</span>
             {% else %}
@@ -37,10 +37,10 @@
     
     <tr>
         <td><b>Total</b></td>
-        <td class="rt">{{ spent_total | intcomma }} /</td>
-        <td class="rt">{{ budget_total | intcomma }} =</td>
-        <td class="rt">{{ total_percent }}%</td>
-        <td class="rt">
+        <td class="rt nowr">{{ spent_total | intcomma }} /</td>
+        <td class="rt nowr">{{ budget_total | intcomma }} =</td>
+        <td class="rt nowr">{{ total_percent }}%</td>
+        <td class="rt nowr">
             {% if "(" in total_remaining %}
             <span style="color: red;">{{ total_remaining }}</span>
             {% else %}
