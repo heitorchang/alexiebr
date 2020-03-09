@@ -262,6 +262,8 @@ def budget(request):
         
     spent_total = 0
     budget_total = 0
+
+    excess_total = 0
     
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user, budget__gt=0):
@@ -292,6 +294,8 @@ def budget(request):
         acct.percent = ceil(acct.bal / acct.budget * 100)
         acct.remaining = floor(acct.budget - acct.bal)
         if acct.remaining < 0:
+            excess_total -= acct.remaining
+            
             acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
         else:
             acct.remaining = "{:,}".format(acct.remaining).replace(",", ".")
@@ -323,6 +327,7 @@ def budget(request):
                    'budget_total': budget_total,
                    'total_percent': total_percent,
                    'total_remaining': total_remaining,
+                   'excess_total': excess_total,
                    'percentelapsed': percentelapsed,
                    'headerBals': headerBals})
 
