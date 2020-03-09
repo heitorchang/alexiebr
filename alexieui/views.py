@@ -263,6 +263,7 @@ def budget(request):
     spent_total = 0
     budget_total = 0
 
+    total_remaining = 0
     excess_total = 0
     
     # assign an account to dict of all accounts
@@ -298,14 +299,11 @@ def budget(request):
             
             acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
         else:
+            total_remaining += acct.remaining
             acct.remaining = "{:,}".format(acct.remaining).replace(",", ".")
     
     total_percent = ceil(spent_total / budget_total * 100)
-    total_remaining = floor(budget_total - spent_total)
-    if total_remaining < 0:
-        total_remaining = "({:,})".format(abs(total_remaining)).replace(",", ".")
-    else:
-        total_remaining = "{:,}".format(total_remaining).replace(",", ".")
+    total_remaining = "{:,}".format(total_remaining).replace(",", ".")
 
     # percent of month elapsed
     mytoday = datetime.date.today()

@@ -41,11 +41,7 @@
         <td class="rt nowr">{{ budget_total | floatformat:"0" | intcomma }} =</td>
         <td class="rt nowr">{{ total_percent }}%</td>
         <td class="rt nowr">
-            {% if "(" in total_remaining %}
-            <span style="color: red;">{{ total_remaining }}</span>
-            {% else %}
-            {{ total_remaining }}
-            {% endif %}
+            <span style="color: #082;">{{ total_remaining }}</span>
         </td>
     </tr>
     <tr>
