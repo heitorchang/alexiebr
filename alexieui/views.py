@@ -294,7 +294,7 @@ def budget(request):
         acct.percent = ceil(acct.bal / acct.budget * 100)
         acct.remaining = floor(acct.budget - acct.bal)
         if acct.remaining < 0:
-            excess_total -= acct.remaining
+            excess_total += abs(acct.remaining)
             
             acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
         else:
