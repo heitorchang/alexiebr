@@ -166,7 +166,7 @@ def acctdetail(request, acctid):
     
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
-    numtxns = int(request.GET.get('numtxns', 100))
+    numtxns = int(request.GET.get('numtxns', 200))
 
     drtotal = Decimal('0.00')
     crtotal = Decimal('0.00')
