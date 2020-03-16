@@ -14,7 +14,7 @@ All time balance: {{ alltimebal | intcomma }}
 Number of transactions: {{ numtxns }}
 <br>
 <div class="accttxns inl bdr">
-    <b>Dr {{ acct.name }}</b> {{ drtotal | intcomma }}
+    <b><a href="{% url 'alexieui:addfixed' acct.id 0 %}">Dr {{ acct.name }}</a></b> {{ drtotal | intcomma }}
     <br><br>
     
     <table>
@@ -30,7 +30,7 @@ Number of transactions: {{ numtxns }}
 </div>
 
 <div class="accttxns inl bdr">
-    <b>Cr {{ acct.name }}</b> {{ crtotal | intcomma }}
+    <b><a href="{% url 'alexieui:addfixed' 0 acct.id %}">Cr {{ acct.name }}</a></b> {{ crtotal | intcomma }}
     <br><br>
 
     <table>

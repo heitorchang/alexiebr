@@ -45,12 +45,16 @@ Add transaction
         <tr>
             <td>Credit:</td>
             <td>
+                {% if creditid == 0 %}
                 <select name="credit">
                     <option value="-1">cr</option>
                     {% for acct in allAccts %}
                     <option value="{{ acct.id }}">{{ acct.name }}</option>
                     {% endfor %}
                 </select>
+                {% else %}
+                <input type="hidden" name="credit" value="{{ creditid }}">{{ creditname }}
+                {% endif %}
             </td>
         </tr>
         
