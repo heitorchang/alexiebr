@@ -5,16 +5,14 @@
 
 {% include 'alexieui/headerbals.html' %}
 
-{% if presetid != 0 %}
-Preset: {{ preset.name }}
-{% else %}
 Add transaction
-{% endif %}
 
 <br>
 <form action="{% url 'alexieui:add' %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" name="addform" value="{{ presetid }}">
+    <input type="hidden" name="addform" value="fixed">
+    <input type="hidden" name="fixeddebit" value="{{ debitid }}">
+    <input type="hidden" name="fixedcredit" value="{{ creditid }}">    
 
     <table>
         <tr>
@@ -27,17 +25,20 @@ Add transaction
             <td><input type="text" name="amt"></td>
         </tr>
 
-        {% if presetid == 0 %}
         <tr>
             <td>Debit:</td>
 
             <td>
+                {% if debitid == 0 %}
                 <select name="debit">
                     <option value="-1">dr</option>
                     {% for acct in allAccts %}
                     <option value="{{ acct.id }}">{{ acct.name }}</option>
                     {% endfor %}
                 </select>
+                {% else %}
+                <input type="hidden" name="debit" value="{{ debitid }}">{{ debitname }}
+                {% endif %}
             </td>
         </tr>
 
@@ -53,53 +54,6 @@ Add transaction
             </td>
         </tr>
         
-        {% else %}
-
-        {% if preset.isDebit %}
-
-        <tr>
-            <td>Debit:</td>
-            <td>{{ preset.fixedAcct.name }}
-                <input type="hidden" name="debit" value="{{ preset.fixedAcct.id }}">
-            </td>
-        </tr>
-
-        <tr>
-            <td>Credit:</td>
-            <td>
-                <select name="credit">
-                    <option value="-1">cr</option>
-                    {% for acct in selectAccts %}
-                    <option value="{{ acct.id }}">{{ acct.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-
-        {% else %}
-
-        <tr>
-            <td>Debit:</td>
-            <td>
-                <select name="debit">
-                    <option value="-1">dr</option>
-                    {% for acct in selectAccts %}
-                    <option value="{{ acct.id }}">{{ acct.name }}</option>
-                    {% endfor %}
-                </select>
-            </td>
-        </tr>
-
-        <tr>
-            <td>Credit:</td>
-            <td>{{ preset.fixedAcct.name }}
-                <input type="hidden" name="credit" value="{{ preset.fixedAcct.id }}">
-            </td>
-        </tr>
-        {% endif %}
-
-        {% endif %}
-
         <tr>
             <td>Date:</td>
             <td><input type="text" name="date" value="{% now "Y-m-d" %}"></td>
@@ -111,11 +65,11 @@ Add transaction
             </td>
         </tr>
     </table>
-    
+
     <hr>
     Showing newest {{ numtxns }} transactions
     &bullet;
-    <a href="{% url 'alexieui:addform' presetid %}?numtxns=30">Show 30</a>
+    <a href="{% url 'alexieui:addfixed' debitid creditid %}?numtxns=30">Show 30</a>
 
     <br>
     <br>

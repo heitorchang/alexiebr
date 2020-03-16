@@ -1,0 +1,13 @@
+{% load humanize %}
+
+<br>
+<div class="grn">
+    {% for headerBalId, headerBal in headerBals.items %}
+    <span class="nowr"><a href="{% url 'alexieui:acctdetail' headerBal.acct.id %}">{{ headerBal.acct.name }}</a> {{ headerBal.bal | intcomma }}</span>
+    {% if not forloop.last %}
+    &bullet;
+    {% endif %}
+    {% endfor %}
+</div>
+
+<br>

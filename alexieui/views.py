@@ -133,11 +133,38 @@ def addform(request, presetid):
                    'latestTxns': latestTxns})
 
 
+def addfixed(request, debitid, creditid):
+    if debitid != 0:
+        debitname = Acct.objects.get(user=request.user, id=debitid).name
+    else:
+        debitname = ""
+
+    if creditid != 0:
+        creditname = Acct.objects.get(user=request.user, id=creditid).name
+    else:
+        creditname = ""
+
+    numtxns = int(request.GET.get('numtxns', 10))
+    allAccts = Acct.objects.filter(user=request.user)
+    latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
+
+    return render(request, 'alexieui/addfixed.html',
+                  {'debitid': debitid,
+                   'debitname': debitname,
+                   'creditid': creditid,
+                   'creditname': creditname,
+                   'allAccts': allAccts,
+                   'latestTxns': latestTxns,
+                  })
+
+
 def add(request):
     if request.method == "POST":
         user = request.user
 
         addform = request.POST['addform']
+        fixeddebit = int(request.POST.get('fixeddebit', 0))
+        fixedcredit = int(request.POST.get('fixedcredit', 0))
         date = request.POST['date']
         desc = request.POST['desc']
         amt = request.POST['amt'].replace(',', '.')
@@ -150,13 +177,16 @@ def add(request):
                            amt=amt,
                            debit=debit,
                            credit=credit)
-        
-        return redirect('alexieui:addform', addform)
+
+        if addform == "fixed":
+            return redirect('alexieui:addfixed', fixeddebit, fixedcredit)
+        else:
+            return redirect('alexieui:addform', addform)
     else:
         return render(request, 'alexieui/redirect.html',
                       {'msg': "Could not process request."})
         
-                    
+
 def hist(request):
     return render(request, 'alexieui/hist.html')
 
@@ -166,7 +196,7 @@ def acctdetail(request, acctid):
     
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
-    numtxns = int(request.GET.get('numtxns', 200))
+    numtxns = int(request.GET.get('numtxns', 300))
 
     drtotal = Decimal('0.00')
     crtotal = Decimal('0.00')

@@ -12,4 +12,5 @@ urlpatterns = [
     path('adj/<int:acctid>/', views.adj, name='adj'),
     path('budget/', views.budget, name='budget'),
     path('search/', views.search, name='search'),
+    path('addfixed/<int:debitid>/<int:creditid>/', views.addfixed, name='addfixed'),
 ]

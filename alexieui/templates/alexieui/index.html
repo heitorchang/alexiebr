@@ -3,14 +3,7 @@
 
 {% block content %}
 
-<div class="grn">
-    {% for headerBalId, headerBal in headerBals.items %}
-    <span class="nowr">{{ headerBal.acct.name }} {{ headerBal.bal | intcomma }}</span>
-    {% if not forloop.last %}
-    &bullet;
-    {% endif %}
-    {% endfor %}
-</div>
+{% include 'alexieui/headerbals.html' %}
 
 <span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} &bullet; <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
 <br>
