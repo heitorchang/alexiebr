@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form action="" method="POST">
+<form action="" method="POST" autocomplete="off">
     {% csrf_token %}
     <input type="hidden" name="acctid" value="{{ acct.id }}">
 

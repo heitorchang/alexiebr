@@ -8,7 +8,7 @@
 Add transaction
 
 <br>
-<form action="{% url 'alexieui:add' %}" method="POST">
+<form action="{% url 'alexieui:add' %}" method="POST" autocomplete="off">
     {% csrf_token %}
     <input type="hidden" name="addform" value="fixed">
     <input type="hidden" name="fixeddebit" value="{{ debitid }}">
