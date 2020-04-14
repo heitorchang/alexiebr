@@ -1,0 +1,11 @@
+{% extends "alexieui/base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+{% for acctid, acctbal in agg.items %}
+{{ acctid }} : {{ acctbal }}
+<br>
+{% endfor %}
+
+{% endblock %}

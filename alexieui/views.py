@@ -4,6 +4,7 @@ from decimal import Decimal
 from math import ceil, floor
 from collections import OrderedDict
 from django.shortcuts import render, redirect
+from django.db.models import Sum
 from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
 
 
@@ -59,7 +60,44 @@ def getDateLabel(startdate, enddate):
     else:
         return "Month"
 
+
+def aggregateAllTxns(request):
+    txns = Txn.objects.filter(user=request.user)
+    return aggregateTxns(request, txns)
+
+
+def aggregateTxns(request, txns):
+    drs = txns.values('debit').order_by('debit').annotate(total_debits=Sum('amt'))
+    crs = txns.values('credit').order_by('credit').annotate(total_credits=Sum('amt'))
     
+    accts = Acct.objects.filter(user=request.user)
+    balances = {}
+    signs = {}
+    names = {}
+
+    # TODO: copy the index.html scheme of organizing by accttype
+    # then by acct
+    
+    for acct in accts:
+        balances[acct.id] = 0
+        signs[acct.id] = acct.acctType.sign
+        names[acct.id] = acct.name
+        
+    for dr in drs:
+        balances[dr['debit']] += dr['total_debits'] * signs[dr['debit']]
+
+    for cr in crs:
+        balances[cr['credit']] -= cr['total_credits'] * signs[cr['credit']]
+            
+    return balances
+
+
+def alltxns(request):
+    agg = aggregateAllTxns(request)
+    return render(request, 'alexieui/alltxns.html',
+                  {'agg': agg})
+
+
 def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
