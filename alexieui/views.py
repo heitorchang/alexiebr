@@ -19,14 +19,20 @@ def getHeaderBals(request):
         headerAcctIds.add(headerBal.acct.id)
     
     for t in Txn.objects.filter(user=request.user):
-        if t.debit.id in headerAcctIds:
+        # if t.debit.id in headerAcctIds:
+        try:
             dracct = headerBals[t.debit.id]
             dracct.bal += t.amt * dracct.acct.acctType.sign
-            
-        if t.credit.id in headerAcctIds:
+        except KeyError:
+            pass
+        
+        # if t.credit.id in headerAcctIds:
+        try:
             cracct = headerBals[t.credit.id]
             cracct.bal -= t.amt * cracct.acct.acctType.sign
-
+        except KeyError:
+            pass
+        
     return headerBals
 
 
