@@ -417,7 +417,8 @@ def budget(request):
     # update spent_total
     for acct in accts.values():
         spent_total += acct.bal
-
+        budget_total += acct.budget
+        
         # compute percentages and remaining
         try:
             acct.percent = ceil(acct.bal / acct.budget * 100)
