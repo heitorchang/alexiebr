@@ -123,6 +123,9 @@ def aggregateBudget(request, txns):
         except KeyError:
             pass
             
+    # convert to Decimal
+    for acct in accts.values():
+        acct.bal = Decimal(acct.bal).quantize(Decimal('1.00'))
     return accts
 
 
