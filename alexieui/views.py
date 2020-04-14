@@ -1,6 +1,6 @@
 import datetime
 from calendar import monthrange
-from decimal import Decimal
+from decimal import Decimal, DivisionByZero
 from math import ceil, floor
 from collections import OrderedDict
 from django.shortcuts import render, redirect
@@ -10,14 +10,17 @@ from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
 
 def getHeaderBals(request):
     # get all-time header balances
+
+    accts = aggregateAllTxns(request)
+
     headerBals = OrderedDict()
-    headerAcctIds = set()
 
     # get header bal accts
     for headerBal in HeaderBal.objects.filter(user=request.user):
         headerBals[headerBal.acct.id] = headerBal
-        headerBals[headerBal.acct.id].bal = Decimal("0.00")
-        headerAcctIds.add(headerBal.acct.id)
+        headerBals[headerBal.acct.id].bal = accts[headerBal.acct.id].bal
+
+    loop_method = """
     
     for t in Txn.objects.filter(user=request.user):
         # if t.debit.id in headerAcctIds:
@@ -33,7 +36,9 @@ def getHeaderBals(request):
             cracct.bal -= t.amt * cracct.acct.acctType.sign
         except KeyError:
             pass
-        
+    """
+
+    
     return headerBals
 
 
@@ -70,26 +75,21 @@ def aggregateTxns(request, txns):
     drs = txns.values('debit').order_by('debit').annotate(total_debits=Sum('amt'))
     crs = txns.values('credit').order_by('credit').annotate(total_credits=Sum('amt'))
     
-    accts = Acct.objects.filter(user=request.user)
-    balances = {}
+    accts = OrderedDict()
     signs = {}
-    names = {}
-
-    # TODO: copy the index.html scheme of organizing by accttype
-    # then by acct
     
-    for acct in accts:
-        balances[acct.id] = 0
+    for acct in Acct.objects.filter(user=request.user):
+        accts[acct.id] = acct
+        accts[acct.id].bal = Decimal("0.00")        
         signs[acct.id] = acct.acctType.sign
-        names[acct.id] = acct.name
         
     for dr in drs:
-        balances[dr['debit']] += dr['total_debits'] * signs[dr['debit']]
+        accts[dr['debit']].bal += dr['total_debits'] * signs[dr['debit']]
 
     for cr in crs:
-        balances[cr['credit']] -= cr['total_credits'] * signs[cr['credit']]
+        accts[cr['credit']].bal -= cr['total_credits'] * signs[cr['credit']]
             
-    return balances
+    return accts
 
 
 def alltxns(request):
@@ -114,7 +114,9 @@ def index(request):
         atypes[atype.id].accts = []
         atypes[atype.id].bal = Decimal("0.00")
 
-        
+
+    loop_method = """
+    
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
@@ -131,6 +133,12 @@ def index(request):
         dracct.bal += t.amt * dracct.acctType.sign
         cracct.bal -= t.amt * cracct.acctType.sign
 
+    """
+
+    accts = aggregateTxns(request,
+                          Txn.objects.filter(user=request.user,
+                                             date__gte=startdate,
+                                             date__lte=enddate))
 
     # place account into its account type's list
     for acct in accts.values():
@@ -330,7 +338,7 @@ def adj(request, acctid):
 
 def budget(request):
     accts = OrderedDict()
-    acctids = set()
+    # acctids = set()
     startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
     enddate = request.GET.get('enddate', '2100-01-01')
         
@@ -339,6 +347,8 @@ def budget(request):
 
     total_remaining = 0
     excess_total = 0
+
+    loop_method = """
     
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user, budget__gt=0):
@@ -359,14 +369,23 @@ def budget(request):
         if t.credit.id in acctids:
             cracct = accts[t.credit.id]
             cracct.bal -= t.amt * cracct.acctType.sign
+    """
 
+    accts = aggregateTxns(request,
+                          Txn.objects.filter(user=request.user,
+                                             date__gte=startdate,
+                                             date__lte=enddate))
 
     # update spent_total
     for acct in accts.values():
         spent_total += acct.bal
 
         # compute percentages and remaining
-        acct.percent = ceil(acct.bal / acct.budget * 100)
+        try:
+            acct.percent = ceil(acct.bal / acct.budget * 100)
+        except DivisionByZero:
+            acct.percent = 0
+            
         acct.remaining = floor(acct.budget - acct.bal)
         if acct.remaining < 0:
             excess_total += abs(acct.remaining)
@@ -375,8 +394,12 @@ def budget(request):
         else:
             total_remaining += acct.remaining
             acct.remaining = "{:,}".format(acct.remaining).replace(",", ".")
-    
-    total_percent = ceil(spent_total / budget_total * 100)
+
+    try:
+        total_percent = ceil(spent_total / budget_total * 100)
+    except DivisionByZero:
+        total_percent = 0
+        
     total_remaining = "{:,}".format(total_remaining).replace(",", ".")
 
     # percent of month elapsed
