@@ -121,13 +121,13 @@ def addform(request, presetid):
     allAccts = Acct.objects.filter(user=request.user)
     latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
 
-    headerBals = getHeaderBals(request)
+    # headerBals = getHeaderBals(request)
     
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
                    'numtxns': numtxns,
                    'preset': preset,
-                   'headerBals': headerBals,
+                   # 'headerBals': headerBals,
                    'allAccts': allAccts,
                    'selectAccts': selectAccts,
                    'latestTxns': latestTxns})
