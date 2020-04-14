@@ -186,14 +186,14 @@ def index(request):
     # get presets
     presets = Preset.objects.filter(user=request.user)
 
-    # headerBals = getHeaderBals(request)
+    headerBals = getHeaderBals(request)
 
     return render(request, 'alexieui/index.html',
                   {'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'datelabel': getDateLabel(startdate, enddate),
                    'presets': presets,
-                   # 'headerBals': headerBals,
+                   'headerBals': headerBals,
                    'atypes': atypes})
 
 

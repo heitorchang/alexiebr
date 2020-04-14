@@ -3,7 +3,7 @@
 
 {% block content %}
 
-{% include 'alexieui/spacer.html' %}
+{% include 'alexieui/headerbals.html' %}
 
 <span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} &bullet; <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
 <br>
