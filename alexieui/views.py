@@ -85,14 +85,17 @@ def aggregateTxns(request, txns):
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
         accts[acct.id].bal = Decimal("0.00")        
-        signs[acct.id] = acct.acctType.sign
+        signs[acct.id] = Decimal(acct.acctType.sign)
         
     for dr in drs:
         accts[dr['debit']].bal += dr['total_debits'] * signs[dr['debit']]
 
     for cr in crs:
         accts[cr['credit']].bal -= cr['total_credits'] * signs[cr['credit']]
-            
+
+    # convert to Decimal
+    for acct in accts.values():
+        acct.bal = Decimal(acct.bal).quantize(Decimal('1.00'))
     return accts
 
 
