@@ -4,7 +4,7 @@ from decimal import Decimal, DivisionByZero
 from math import ceil, floor
 from collections import OrderedDict
 from django.shortcuts import render, redirect
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
 
 
@@ -43,16 +43,20 @@ def getHeaderBals(request):
 
 
 def getAllTimeBal(request, acctid):
-    bal = 0
     acct = Acct.objects.get(user=request.user, id=acctid)
 
+    loop_method = """
+    bal = 0
     for t in Txn.objects.filter(user=request.user):
         if t.debit.id == acctid:
             bal += t.amt * acct.acctType.sign
             
         if t.credit.id == acctid:
             bal -= t.amt * acct.acctType.sign
-    return bal
+    """
+
+    agg = aggregateAllTxns(request)
+    return agg[acctid].bal
 
             
 def getDateLabel(startdate, enddate):
@@ -88,6 +92,33 @@ def aggregateTxns(request, txns):
 
     for cr in crs:
         accts[cr['credit']].bal -= cr['total_credits'] * signs[cr['credit']]
+            
+    return accts
+
+
+def aggregateBudget(request, txns):
+    drs = txns.values('debit').order_by('debit').annotate(total_debits=Sum('amt'))
+    crs = txns.values('credit').order_by('credit').annotate(total_credits=Sum('amt'))
+    
+    accts = OrderedDict()
+    signs = {}
+    
+    for acct in Acct.objects.filter(user=request.user, budget__gt=0):
+        accts[acct.id] = acct
+        accts[acct.id].bal = Decimal("0.00")        
+        signs[acct.id] = acct.acctType.sign
+        
+    for dr in drs:
+        try:
+            accts[dr['debit']].bal += dr['total_debits'] * signs[dr['debit']]
+        except KeyError:
+            pass
+
+    for cr in crs:
+        try:
+            accts[cr['credit']].bal -= cr['total_credits'] * signs[cr['credit']]
+        except KeyError:
+            pass
             
     return accts
 
@@ -173,13 +204,13 @@ def addform(request, presetid):
     allAccts = Acct.objects.filter(user=request.user)
     latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
 
-    # headerBals = getHeaderBals(request)
+    headerBals = getHeaderBals(request)
     
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
                    'numtxns': numtxns,
                    'preset': preset,
-                   # 'headerBals': headerBals,
+                   'headerBals': headerBals,
                    'allAccts': allAccts,
                    'selectAccts': selectAccts,
                    'latestTxns': latestTxns})
@@ -256,24 +287,21 @@ def acctdetail(request, acctid):
     drtxns = []
     crtxns = []
     
-    totaltxns = 0
+    query = Q(user=request.user)
+    query.add(Q(date__gte=startdate), Q.AND)
+    query.add(Q(date__lte=enddate), Q.AND)
+    query.add(Q(debit=acctid) | Q(credit=acctid), Q.AND)
     
-    for txn in Txn.objects.filter(user=request.user,
-                                  date__gte=startdate,
-                                  date__lte=enddate).order_by('-date', '-id'):
-        if totaltxns >= numtxns:
-            break
-        
+    txns = Txn.objects.filter(query).order_by('-date', '-id')[:numtxns]
+
+    for txn in txns:
         if txn.debit == acct:
             drtxns.append(txn)
             drtotal += txn.amt
-            totaltxns += 1
 
         if txn.credit == acct:
             crtxns.append(txn)
             crtotal += txn.amt
-            totaltxns += 1
-    
 
     return render(request, 'alexieui/acctdetail.html',
                   {'acct': acct,
@@ -290,16 +318,22 @@ def acctdetail(request, acctid):
 
 def adj(request, acctid):
     acct = Acct.objects.get(user=request.user, id=acctid)
-    acct.bal = Decimal('0.00')
         
     # get all-time balance
+    loop_method = """
+    acct.bal = Decimal('0.00')
+
     for t in Txn.objects.filter(user=request.user):
         if t.debit.id == acctid:
             acct.bal += t.amt * acct.acctType.sign
             
         if t.credit.id == acctid:
             acct.bal -= t.amt * acct.acctType.sign
-            
+    """
+
+    agg = aggregateAllTxns(request)
+    acct.bal = agg[acct.id].bal
+    
     if request.method == "POST":
         diff = Decimal(request.POST.get('newbal', '0.00').replace(',', '.')) - acct.bal
         sign = acct.acctType.sign
@@ -337,8 +371,6 @@ def adj(request, acctid):
 
 
 def budget(request):
-    accts = OrderedDict()
-    # acctids = set()
     startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
     enddate = request.GET.get('enddate', '2100-01-01')
         
@@ -371,11 +403,11 @@ def budget(request):
             cracct.bal -= t.amt * cracct.acctType.sign
     """
 
-    accts = aggregateTxns(request,
-                          Txn.objects.filter(user=request.user,
-                                             date__gte=startdate,
-                                             date__lte=enddate))
-
+    accts = aggregateBudget(request,
+                            Txn.objects.filter(user=request.user,
+                                               date__gte=startdate,
+                                               date__lte=enddate))
+    
     # update spent_total
     for acct in accts.values():
         spent_total += acct.bal
