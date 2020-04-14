@@ -467,7 +467,7 @@ def budget(request):
 
 def search(request):
     q = request.GET.get('q', '')
-    numtxns = int(request.GET.get('numtxns', 30))
+    numtxns = int(request.GET.get('numtxns', 100))
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
     
