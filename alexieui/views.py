@@ -237,12 +237,15 @@ def addfixed(request, debitid, creditid):
     allAccts = Acct.objects.filter(user=request.user)
     latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
 
+    headerBals = getHeaderBals(request)
+
     return render(request, 'alexieui/addfixed.html',
                   {'debitid': debitid,
                    'debitname': debitname,
                    'creditid': creditid,
                    'creditname': creditname,
                    'allAccts': allAccts,
+                   'headerBals': headerBals,
                    'latestTxns': latestTxns,
                   })
 
@@ -292,7 +295,9 @@ def acctdetail(request, acctid):
     
     drtxns = []
     crtxns = []
-    
+
+    headerBals = getHeaderBals(request)
+
     query = Q(user=request.user)
     query.add(Q(date__gte=startdate), Q.AND)
     query.add(Q(date__lte=enddate), Q.AND)
@@ -315,6 +320,7 @@ def acctdetail(request, acctid):
                    'enddate': datetime.datetime.strptime(enddate, "%Y-%m-%d"),
                    'datelabel': getDateLabel(startdate, enddate),
                    'alltimebal': getAllTimeBal(request, acctid),
+                   'headerBals': headerBals,
                    'numtxns': numtxns,
                    'drtotal': drtotal,
                    'crtotal': crtotal,
