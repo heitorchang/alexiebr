@@ -19,7 +19,9 @@
             {% if "(" in acct.remaining %}
             <span style="color: red;">{{ acct.remaining }}</span>
             {% else %}
-            {{ acct.remaining }}
+              {% if acct.budget > 1 %}
+                {{ acct.remaining }}
+              {% endif %}
             {% endif %}
         </td>
     </tr>
