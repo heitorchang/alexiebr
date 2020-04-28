@@ -471,6 +471,7 @@ def budget(request):
                    'total_percent': total_percent,
                    'total_remaining': total_remaining,
                    'excess_total': excess_total,
+                   'bdg_exc': int(budget_total + excess_total),
                    'percentelapsed': percentelapsed,
                    'headerBals': headerBals})
 

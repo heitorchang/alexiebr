@@ -41,6 +41,10 @@
         <td class="rt red" colspan="4">Excess</td>
         <td class="rt red">({{ excess_total | intcomma }})</td>
     </tr>
+    <tr>
+        <td class="rt" colspan="4">Bdg + Excess</td>
+        <td class="rt">{{ bdg_exc | intcomma }}</td>
+    </tr>
 </table>
 
 {% endblock %}
