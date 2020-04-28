@@ -427,7 +427,10 @@ def budget(request):
         
         # compute percentages and remaining
         try:
-            acct.percent = ceil(acct.bal / acct.budget * 100)
+            if acct.budget == 1:
+                acct.percent = 0
+            else:
+                acct.percent = ceil(acct.bal / acct.budget * 100)
         except DivisionByZero:
             acct.percent = 0
             
