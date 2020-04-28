@@ -13,8 +13,8 @@
     <tr>
         <td class="nowr"><a href="{% url 'alexieui:acctdetail' acct.id %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">{{ acct.name }}</a></td>
         <td class="rt nowr">{{ acct.bal | intcomma }} /</td>
-        <td class="rt nowr">{{ acct.budget | floatformat:"0" | intcomma }} =</td>
-        <td class="rt nowr">{{ acct.percent }}%</td>
+        <td class="rt nowr">{% if acct.budget > 1 %}{{ acct.budget | floatformat:"0" | intcomma }} ={% endif %}</td>
+        <td class="rt nowr">{% if acct.percent >= 0 %}{{ acct.percent }}%{% endif %}</td>
         <td class="rt nowr">
             {% if "(" in acct.remaining %}
             <span style="color: red;">{{ acct.remaining }}</span>
