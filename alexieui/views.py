@@ -423,7 +423,9 @@ def budget(request):
     # update spent_total
     for acct in accts.values():
         spent_total += acct.bal
-        budget_total += acct.budget
+
+        if acct.budget > 1:
+            budget_total += acct.budget
         
         # compute percentages and remaining
         try:
