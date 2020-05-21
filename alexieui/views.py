@@ -432,7 +432,7 @@ def budget(request):
             if acct.budget == 1:
                 acct.percent = -1
             else:
-                acct.percent = ceil(acct.bal / acct.budget * 100)
+                acct.percent = ceil(ceil(acct.bal) / acct.budget * 100)
         except DivisionByZero:
             acct.percent = 0
             
