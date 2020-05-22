@@ -13,6 +13,9 @@ All time balance: {{ alltimebal | intcomma }}
 <a href="{% url 'alexieui:adj' acct.id %}">Adjust balance</a>
 <br><br>
 
+<a href="/admin/acct/acct/{{ acct.id }}/change/">Edit account details</a>
+<br><br>
+
 Number of transactions: {{ numtxns }}
 <br>
 <div class="accttxns inl bdr">
