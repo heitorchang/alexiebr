@@ -442,7 +442,8 @@ def budget(request):
             
             acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
         else:
-            total_remaining += acct.remaining
+            if acct.budget > 1:
+                total_remaining += acct.remaining
             acct.remaining = "{:,}".format(acct.remaining).replace(",", ".")
 
     try:
