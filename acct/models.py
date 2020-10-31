@@ -93,7 +93,7 @@ class MonthlyRecord(models.Model):
     expenses = models.IntegerField()
 
     class Meta:
-        ordering = ['-month']
+        ordering = ['month']
 
     def __str__(self):
         return "{}: {} = {} - {}".format(self.month.strftime("%b %Y"),
