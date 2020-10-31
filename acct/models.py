@@ -96,7 +96,7 @@ class MonthlyRecord(models.Model):
         ordering = ['month']
 
     def __str__(self):
-        return "{}: {} = {} - {}".format(self.month.strftime("%b %Y"),
+        return "{}: {:>7} = {:>7} - {:>7}".format(self.month.strftime("%b %Y"),
                                          self.income - self.expenses,
                                          self.income,
                                          self.expenses)
