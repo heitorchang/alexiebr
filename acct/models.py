@@ -82,3 +82,21 @@ class HeaderBal(models.Model):
 
     def __str__(self):
         return "{} ({})".format(self.acct.name, self.user)
+
+
+class MonthlyRecord(models.Model):
+    """Historical data (total expense and income) for each month"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    month = models.DateField()
+    income = models.IntegerField()
+    expenses = models.IntegerField()
+
+    class Meta:
+        ordering = ['-month']
+
+    def __str__(self):
+        return "{}: {} - {} = {}".format(self.month.strftime("%b %Y"),
+                                         self.income,
+                                         self.expenses,
+                                         self.income - self.expenses)

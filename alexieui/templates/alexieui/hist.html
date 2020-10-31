@@ -2,7 +2,21 @@
 
 {% block content %}
 
+<p>
+Yr. total inc: {{ total_inc }}<br>
+Yr. total exp: {{ total_exp }}<br><br>
+Yr. diff: {{ grand_total }}
+</p>
+
+<pre>{% for month in months %}
+{{ month }}{% endfor %}
+</pre>
+
 <pre>
+2020: <a href="/?startdate=2020-01-01&enddate=2020-01-31">Jan</a>  <a href="/?startdate=2020-02-01&enddate=2020-02-29">Feb</a>   <a href="/?startdate=2020-03-01&enddate=2020-03-31">Mar</a>   <a href="/?startdate=2020-04-01&enddate=2020-04-30">Apr</a>   <a href="/?startdate=2020-05-01&enddate=2020-05-31">May</a>   <a href="/?startdate=2020-06-01&enddate=2020-06-30">Jun</a>   <a href="/?startdate=2020-07-01&enddate=2020-07-31">Jul</a>   <a href="/?startdate=2020-08-01&enddate=2020-08-31">Aug</a>   <a href="/?startdate=2020-09-01&enddate=2020-09-30">Sep</a>   <a href="/?startdate=2020-10-01&enddate=2020-10-31">Oct</a>   <a href="/?startdate=2020-11-01&enddate=2020-11-30">Nov</a>   <a href="/?startdate=2020-12-01&enddate=2020-12-31">Dec</a>
+</pre>
+
+<!--
         exp    inc-exp
 
 <a href="{% url 'alexieui:index' %}?startdate=2020-01-01&enddate=2020-12-31">2020 (all)</a>
@@ -31,6 +45,6 @@
 
 <a href="{% url 'alexieui:index' %}?startdate=2020-12-01&enddate=2020-12-31">2020-12</a>  ----   ----
 
-</pre>
+-->
 
 {% endblock %}

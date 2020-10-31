@@ -5,7 +5,7 @@ from math import ceil, floor
 from collections import OrderedDict
 from django.shortcuts import render, redirect
 from django.db.models import Q, Sum
-from acct.models import AcctType, Acct, Txn, Preset, HeaderBal
+from acct.models import AcctType, Acct, Txn, Preset, HeaderBal, MonthlyRecord
 
 
 def getHeaderBals(request):
@@ -280,7 +280,25 @@ def add(request):
         
 
 def hist(request):
-    return render(request, 'alexieui/hist.html')
+    user = request.user
+    date_now = datetime.datetime.now()
+    total_inc = 0
+    total_exp = 0
+    
+    months = MonthlyRecord.objects.filter(user=user, month__gte=datetime.datetime(date_now.year, 1, 1))
+
+    for month in months:
+        total_inc += month.income
+        total_exp += month.expenses
+
+    grand_total = total_inc - total_exp
+    
+    return render(request, 'alexieui/hist.html',
+                  {'months': months,
+                   'total_inc': total_inc,
+                   'total_exp': total_exp,
+                   'grand_total': grand_total
+                   })
 
 
 def acctdetail(request, acctid):
