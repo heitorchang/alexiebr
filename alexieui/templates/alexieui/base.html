@@ -98,11 +98,8 @@
             &bullet;
             <a href="{% url 'alexieui:search' %}">srch</a>
 
-            {% if user.get_username == 'heitor' %}
             &bullet;
             <a href="{% url 'alexieui:hist' %}">Ym</a>
-
-            {% endif %}
         </div>
 
         {% block content %}{% endblock %}
