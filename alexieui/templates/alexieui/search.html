@@ -8,17 +8,14 @@
         <tr>
             <td>Query</td>
             <td><input type="text" id="qinput" name="q" value="{{ q }}" autofocus></td>
-            <td><input type="button" onclick="document.getElementById('qinput').value=''; document.getElementById('qinput').focus();" value="Clr query"></td>
         </tr>
         <tr>
             <td>Start</td>
             <td><input type="text" name="startdate" value="{{ startdate }}"></td>
-            <td>&nbsp;</td>
         </tr>
         <tr>
             <td>End</td>
             <td><input type="text" name="enddate" value="{{ enddate }}"></td>
-            <td>&nbsp;</td>
         </tr>
     </table>
     <input type="submit">
@@ -31,7 +28,7 @@
 <table>
     {% for txn in txns %}
     <tr class="tlist">
-        <td class="tlistdate">{{ txn.date | date:"D d M" }}</td>
+        <td class="tlistdate">{{ txn.date | date:"D d M 'y" }}</td>
         <td class="rt">{{ txn.amt | intcomma }}</td>
         <td><a href="/admin/acct/txn/{{ txn.id }}/change/">{{ txn.desc }}</a></td>
         <td><a href="{% url 'alexieui:acctdetail' txn.debit.id %}">{{ txn.debit.name }}</a></td>
