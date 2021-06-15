@@ -332,6 +332,12 @@ def acctdetail(request, acctid):
             crtxns.append(txn)
             crtotal += txn.amt
 
+    if drtotal == crtotal:
+        currentBal = Decimal('0.00')
+    else:
+        currentBal = acct.acctType.sign * (drtotal - crtotal)
+    currentBal = Decimal(currentBal).quantize(Decimal('1.00'))
+    
     return render(request, 'alexieui/acctdetail.html',
                   {'acct': acct,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
@@ -342,6 +348,7 @@ def acctdetail(request, acctid):
                    'numtxns': numtxns,
                    'drtotal': drtotal,
                    'crtotal': crtotal,
+                   'currentBal': currentBal,
                    'drtxns': drtxns,
                    'crtxns': crtxns})
 

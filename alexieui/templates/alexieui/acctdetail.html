@@ -11,6 +11,8 @@
 All time balance: {{ alltimebal | intcomma }}
 &bullet;
 <a href="{% url 'alexieui:adj' acct.id %}">Adjust balance</a>
+<br>
+Period balance: {{ currentBal | intcomma }}
 <br><br>
 
 <a href="/admin/acct/acct/{{ acct.id }}/change/">Edit account details</a>
