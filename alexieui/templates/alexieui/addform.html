@@ -23,8 +23,8 @@ Add transaction
         </tr>
 
         <tr>
-            <td>Amt:</td>
-            <td><input type="text" name="amt"></td>
+            <td>Amts:</td>
+            <td><input type="text" name="amts"></td>
         </tr>
 
         {% if presetid == 0 %}
@@ -52,7 +52,7 @@ Add transaction
                 </select>
             </td>
         </tr>
-        
+
         {% else %}
 
         {% if preset.isDebit %}
@@ -111,7 +111,7 @@ Add transaction
             </td>
         </tr>
     </table>
-    
+
     <hr>
     Showing newest {{ numtxns }} transactions
     &bullet;

@@ -12,7 +12,7 @@ Add transaction
     {% csrf_token %}
     <input type="hidden" name="addform" value="fixed">
     <input type="hidden" name="fixeddebit" value="{{ debitid }}">
-    <input type="hidden" name="fixedcredit" value="{{ creditid }}">    
+    <input type="hidden" name="fixedcredit" value="{{ creditid }}">
 
     <table>
         <tr>
@@ -21,8 +21,8 @@ Add transaction
         </tr>
 
         <tr>
-            <td>Amt:</td>
-            <td><input type="text" name="amt"></td>
+            <td>Amts:</td>
+            <td><input type="text" name="amts"></td>
         </tr>
 
         <tr>
@@ -57,7 +57,7 @@ Add transaction
                 {% endif %}
             </td>
         </tr>
-        
+
         <tr>
             <td>Date:</td>
             <td><input type="text" name="date" value="{% now "Y-m-d" %}"></td>

@@ -21,7 +21,7 @@ def getHeaderBals(request):
         headerBals[headerBal.acct.id].bal = accts[headerBal.acct.id].bal
 
     loop_method = """
-    
+
     for t in Txn.objects.filter(user=request.user):
         # if t.debit.id in headerAcctIds:
         try:
@@ -29,7 +29,7 @@ def getHeaderBals(request):
             dracct.bal += t.amt * dracct.acct.acctType.sign
         except KeyError:
             pass
-        
+
         # if t.credit.id in headerAcctIds:
         try:
             cracct = headerBals[t.credit.id]
@@ -38,7 +38,7 @@ def getHeaderBals(request):
             pass
     """
 
-    
+
     return headerBals
 
 
@@ -50,7 +50,7 @@ def getAllTimeBal(request, acctid):
     for t in Txn.objects.filter(user=request.user):
         if t.debit.id == acctid:
             bal += t.amt * acct.acctType.sign
-            
+
         if t.credit.id == acctid:
             bal -= t.amt * acct.acctType.sign
     """
@@ -58,7 +58,7 @@ def getAllTimeBal(request, acctid):
     agg = aggregateAllTxns(request)
     return agg[acctid].bal
 
-            
+
 def getDateLabel(startdate, enddate):
     if startdate == "2000-01-01":
         return "All time"
@@ -78,15 +78,15 @@ def aggregateAllTxns(request):
 def aggregateTxns(request, txns):
     drs = txns.values('debit').order_by('debit').annotate(total_debits=Sum('amt'))
     crs = txns.values('credit').order_by('credit').annotate(total_credits=Sum('amt'))
-    
+
     accts = OrderedDict()
     signs = {}
-    
+
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
-        accts[acct.id].bal = Decimal("0.00")        
+        accts[acct.id].bal = Decimal("0.00")
         signs[acct.id] = Decimal(acct.acctType.sign)
-        
+
     for dr in drs:
         accts[dr['debit']].bal += dr['total_debits'] * signs[dr['debit']]
 
@@ -102,15 +102,15 @@ def aggregateTxns(request, txns):
 def aggregateBudget(request, txns):
     drs = txns.values('debit').order_by('debit').annotate(total_debits=Sum('amt'))
     crs = txns.values('credit').order_by('credit').annotate(total_credits=Sum('amt'))
-    
+
     accts = OrderedDict()
     signs = {}
-    
+
     for acct in Acct.objects.filter(user=request.user, budget__gt=0):
         accts[acct.id] = acct
-        accts[acct.id].bal = Decimal("0.00")        
+        accts[acct.id].bal = Decimal("0.00")
         signs[acct.id] = acct.acctType.sign
-        
+
     for dr in drs:
         try:
             accts[dr['debit']].bal += dr['total_debits'] * signs[dr['debit']]
@@ -122,7 +122,7 @@ def aggregateBudget(request, txns):
             accts[cr['credit']].bal -= cr['total_credits'] * signs[cr['credit']]
         except KeyError:
             pass
-            
+
     # convert to Decimal
     for acct in accts.values():
         acct.bal = Decimal(acct.bal).quantize(Decimal('1.00'))
@@ -138,13 +138,13 @@ def alltxns(request):
 def index(request):
     if not request.user.is_authenticated:
         return redirect('admin:index')
-    
+
     startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
     enddate = request.GET.get('enddate', '2100-01-01')
-        
+
     atypes = OrderedDict()
     accts = OrderedDict()
-    
+
     # Initialize dict of account types
     for atype in AcctType.objects.all():
         atypes[atype.id] = atype
@@ -153,20 +153,20 @@ def index(request):
 
 
     loop_method = """
-    
+
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user):
         accts[acct.id] = acct
         accts[acct.id].bal = Decimal("0.00")
 
-        
+
     # alter balances
     for t in Txn.objects.filter(user=request.user,
                                 date__gte=startdate,
                                 date__lte=enddate):
         dracct = accts[t.debit.id]
         cracct = accts[t.credit.id]
-        
+
         dracct.bal += t.amt * dracct.acctType.sign
         cracct.bal -= t.amt * cracct.acctType.sign
 
@@ -181,7 +181,7 @@ def index(request):
     for acct in accts.values():
         atypes[acct.acctType.id].accts.append(acct)
         atypes[acct.acctType.id].bal += acct.bal
-        
+
 
     # get presets
     presets = Preset.objects.filter(user=request.user)
@@ -206,12 +206,12 @@ def addform(request, presetid):
         selectAccts = None
 
     numtxns = int(request.GET.get('numtxns', 10))
-        
+
     allAccts = Acct.objects.filter(user=request.user)
     latestTxns = Txn.objects.filter(user=request.user)[:numtxns]
 
     headerBals = getHeaderBals(request)
-    
+
     return render(request, 'alexieui/addform.html',
                   {'presetid': presetid,
                    'numtxns': numtxns,
@@ -259,16 +259,17 @@ def add(request):
         fixedcredit = int(request.POST.get('fixedcredit', 0))
         date = request.POST['date']
         desc = request.POST['desc']
-        amt = request.POST['amt'].replace(',', '.')
+        amts = request.POST['amts'].replace(',', '.')
         debit = Acct.objects.get(user=user, id=int(request.POST['debit']))
         credit = Acct.objects.get(user=user, id=int(request.POST['credit']))
 
-        Txn.objects.create(user=user,
-                           date=date,
-                           desc=desc,
-                           amt=amt,
-                           debit=debit,
-                           credit=credit)
+        for amt in amts.split():
+            Txn.objects.create(user=user,
+                               date=date,
+                               desc=desc,
+                               amt=amt,
+                               debit=debit,
+                               credit=credit)
 
         if addform == "fixed":
             return redirect('alexieui:addfixed', fixeddebit, fixedcredit)
@@ -277,14 +278,14 @@ def add(request):
     else:
         return render(request, 'alexieui/redirect.html',
                       {'msg': "Could not process request."})
-        
+
 
 def hist(request):
     user = request.user
     date_now = datetime.datetime.now()
     total_inc = 0
     total_exp = 0
-    
+
     months = MonthlyRecord.objects.filter(user=user, month__gte=datetime.datetime(date_now.year, 1, 1))
 
     for month in months:
@@ -292,7 +293,7 @@ def hist(request):
         total_exp += month.expenses
 
     grand_total = total_inc - total_exp
-    
+
     return render(request, 'alexieui/hist.html',
                   {'months': months,
                    'total_inc': total_inc,
@@ -303,14 +304,14 @@ def hist(request):
 
 def acctdetail(request, acctid):
     acct = Acct.objects.get(user=request.user, id=acctid)
-    
+
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
     numtxns = int(request.GET.get('numtxns', 300))
 
     drtotal = Decimal('0.00')
     crtotal = Decimal('0.00')
-    
+
     drtxns = []
     crtxns = []
 
@@ -320,7 +321,7 @@ def acctdetail(request, acctid):
     query.add(Q(date__gte=startdate), Q.AND)
     query.add(Q(date__lte=enddate), Q.AND)
     query.add(Q(debit=acctid) | Q(credit=acctid), Q.AND)
-    
+
     txns = Txn.objects.filter(query).order_by('-date', '-id')[:numtxns]
 
     for txn in txns:
@@ -337,7 +338,7 @@ def acctdetail(request, acctid):
     else:
         currentBal = acct.acctType.sign * (drtotal - crtotal)
     currentBal = Decimal(currentBal).quantize(Decimal('1.00'))
-    
+
     return render(request, 'alexieui/acctdetail.html',
                   {'acct': acct,
                    'startdate': datetime.datetime.strptime(startdate, "%Y-%m-%d"),
@@ -355,7 +356,7 @@ def acctdetail(request, acctid):
 
 def adj(request, acctid):
     acct = Acct.objects.get(user=request.user, id=acctid)
-        
+
     # get all-time balance
     loop_method = """
     acct.bal = Decimal('0.00')
@@ -363,18 +364,18 @@ def adj(request, acctid):
     for t in Txn.objects.filter(user=request.user):
         if t.debit.id == acctid:
             acct.bal += t.amt * acct.acctType.sign
-            
+
         if t.credit.id == acctid:
             acct.bal -= t.amt * acct.acctType.sign
     """
 
     agg = aggregateAllTxns(request)
     acct.bal = agg[acct.id].bal
-    
+
     if request.method == "POST":
         diff = Decimal(request.POST.get('newbal', '0.00').replace(',', '.')) - acct.bal
         sign = acct.acctType.sign
-        
+
         if diff < 0:
             diff_sign = -1
         else:
@@ -396,12 +397,12 @@ def adj(request, acctid):
                            amt=abs(diff),
                            debit=Acct.objects.get(user=request.user, id=debit),
                            credit=Acct.objects.get(user=request.user, id=credit))
-                           
+
         return redirect("alexieui:acctdetail", acctid)
-    
+
     else:
         allaccts = Acct.objects.filter(user=request.user)
-        
+
         return render(request, 'alexieui/adjform.html',
                       {'acct': acct,
                        'allaccts': allaccts})
@@ -410,7 +411,7 @@ def adj(request, acctid):
 def budget(request):
     startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
     enddate = request.GET.get('enddate', '2100-01-01')
-        
+
     spent_total = 0
     budget_total = 0
 
@@ -418,7 +419,7 @@ def budget(request):
     excess_total = 0
 
     loop_method = """
-    
+
     # assign an account to dict of all accounts
     for acct in Acct.objects.filter(user=request.user, budget__gt=0):
         accts[acct.id] = acct
@@ -444,14 +445,14 @@ def budget(request):
                             Txn.objects.filter(user=request.user,
                                                date__gte=startdate,
                                                date__lte=enddate))
-    
+
     # update spent_total
     for acct in accts.values():
         spent_total += acct.bal
 
         if acct.budget > 1:
             budget_total += acct.budget
-        
+
         # compute percentages and remaining
         try:
             if acct.budget == 1:
@@ -460,11 +461,11 @@ def budget(request):
                 acct.percent = ceil(ceil(acct.bal) / acct.budget * 100)
         except DivisionByZero:
             acct.percent = 0
-            
+
         acct.remaining = floor(acct.budget - acct.bal)
         if acct.remaining < 0:
             excess_total += abs(acct.remaining)
-            
+
             acct.remaining = "({:,})".format(abs(acct.remaining)).replace(",", ".")
         else:
             if acct.budget > 1:
@@ -475,7 +476,7 @@ def budget(request):
         total_percent = ceil(spent_total / budget_total * 100)
     except DivisionByZero:
         total_percent = 0
-        
+
     total_remaining = "{:,}".format(total_remaining).replace(",", ".")
 
     # percent of month elapsed
@@ -486,7 +487,7 @@ def budget(request):
 
     lastday = monthrange(thisyear, thismonth)[1]
     percentelapsed = ceil((thisday - 1) / lastday * 100)
-    
+
     headerBals = getHeaderBals(request)
 
     return render(request, 'alexieui/budget.html',
@@ -509,7 +510,7 @@ def search(request):
     numtxns = int(request.GET.get('numtxns', 100))
     startdate = request.GET.get('startdate', '2000-01-01')
     enddate = request.GET.get('enddate', '2100-01-01')
-    
+
     if len(q) > 0:
         msg = "Results for {} ({} transactions)".format(q, numtxns)
         txns = Txn.objects.filter(user=request.user,
@@ -519,7 +520,7 @@ def search(request):
     else:
         msg = ""
         txns = []
-        
+
     return render(request, 'alexieui/search.html',
                   {'txns': txns,
                    'q': q,
