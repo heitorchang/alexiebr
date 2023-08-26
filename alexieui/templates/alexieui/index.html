@@ -5,7 +5,14 @@
 
 {% include 'alexieui/headerbals.html' %}
 
-<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} &bullet; <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
+<span style="color: red;">{{ datelabel }}</span> {{ startdate | date:"M Y" }} &bull; <a href="{% url 'alexieui:budget' %}?startdate={{ startdate | date:"Y-m-d" }}&enddate={{ enddate | date:"Y-m-d" }}">View budget</a>
+
+<br>
+
+Date range:
+<input id="rangestart" type="date"> to <input id="rangeend" type="date">
+<button onclick="setrange()">Go</button>
+
 <br>
 
 {% for atid, at in atypes.items %}{% if at.accts|length %}<div class="accttype bdr inl">
@@ -22,12 +29,18 @@
         <tr>
             <td colspan="2"><hr></td>
         </tr>
-        
+
         <tr>
             <td><b>Total:</b></td>
             <td class="rt">{{ at.bal | intcomma }}</td>
         </tr>
     </table>
 </div>{% endif %}{% endfor %}
-
+<script>
+function setrange() {
+  const rstart = document.getElementById('rangestart').value;
+  const rend = document.getElementById('rangeend').value;
+  window.location.href = `/?startdate=${rstart}&enddate=${rend}`;
+}
+</script>
 {% endblock %}
