@@ -140,7 +140,14 @@ def index(request):
         return redirect('admin:index')
 
     startdate = request.GET.get('startdate', datetime.date.today().strftime("%Y-%m-01"))
-    enddate = request.GET.get('enddate', '2100-01-01')
+    date_today = datetime.date.today()
+    if date_today.month == 12:
+        end_of_month = datetime.date(date_today.year + 1, 1, 1)
+    else:
+        end_of_month = datetime.date(date_today.year, date_today.month + 1, 1)
+    end_of_month = end_of_month - datetime.timedelta(days=1)
+
+    enddate = request.GET.get('enddate', end_of_month.strftime('%Y-%m-%d')) # previously '2100-01-01'
 
     atypes = OrderedDict()
     accts = OrderedDict()

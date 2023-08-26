@@ -10,7 +10,7 @@
 <br>
 
 Date range:
-<input id="rangestart" type="date"> to <input id="rangeend" type="date">
+<input id="rangestart" type="date" value="{{ startdate | date:"Y-m-d" }}"> to <input id="rangeend" type="date" value="{{ enddate | date:"Y-m-d" }}">
 <button onclick="setrange()">Go</button>
 
 <br>
